@@ -115,43 +115,47 @@ class ConfigService extends BaseApiService
      */
     public function update(array $data): ?JsonResponse
     {
-        $data['about_us'] = $this->getRemvePicUrl($data['about_us']);
-        $data['ios_must_update'] = $data['ios_must_update'] ? 1 : 0;
-        $data['android_must_update'] = $data['android_must_update'] ? 1 : 0;
-        $data['register_send_sms'] = $data['register_send_sms'] ? 1 : 0;
-        $data['login_send_sms'] = $data['login_send_sms'] ? 1 : 0;
-        $data['found_send_sms'] = $data['found_send_sms'] ? 1 : 0;
-        $data['register_gift'] = $data['register_gift'] ? 1 : 0;
-        $data['app_first_gift'] = $data['app_first_gift'] ? 1 : 0;
+        try{
+            $data['about_us'] = $this->getRemvePicUrl($data['about_us']);
+            $data['ios_must_update'] = $data['ios_must_update'] ? 1 : 0;
+            $data['android_must_update'] = $data['android_must_update'] ? 1 : 0;
+            $data['register_send_sms'] = $data['register_send_sms'] ? 1 : 0;
+            $data['login_send_sms'] = $data['login_send_sms'] ? 1 : 0;
+            $data['found_send_sms'] = $data['found_send_sms'] ? 1 : 0;
+            $data['register_gift'] = $data['register_gift'] ? 1 : 0;
+            $data['app_first_gift'] = $data['app_first_gift'] ? 1 : 0;
 
-        $data['xg_report'] = $data['xg_report'] ? 1 : 0;
-        $data['xin_ao_report'] = $data['xin_ao_report'] ? 1 : 0;
-        $data['tian_ao_report'] = $data['tian_ao_report'] ? 1 : 0;
-        $data['tw_report'] = $data['tw_report'] ? 1 : 0;
-        $data['xjp_report'] = $data['xjp_report'] ? 1 : 0;
-        $data['kl8_report'] = $data['kl8_report'] ? 1 : 0;
-        $data['lao_ao_report'] = $data['lao_ao_report'] ? 1 : 0;
-        $data['sys_update'] = $data['sys_update'] ? 1 : 0;
-        Redis::set('xg_report', $data['xg_report']);
-        Redis::set('xin_ao_report', $data['xin_ao_report']);
-        Redis::set('tian_ao_report', $data['tian_ao_report']);
-        Redis::set('tw_report', $data['tw_report']);
-        Redis::set('xjp_report', $data['xjp_report']);
-        Redis::set('kl8_report', $data['kl8_report']);
-        Redis::set('lao_ao_report', $data['lao_ao_report']);
-        Redis::set('sys_update', $data['sys_update']);
+            $data['xg_report'] = $data['xg_report'] ? 1 : 0;
+            $data['xin_ao_report'] = $data['xin_ao_report'] ? 1 : 0;
+            $data['tian_ao_report'] = $data['tian_ao_report'] ? 1 : 0;
+            $data['tw_report'] = $data['tw_report'] ? 1 : 0;
+            $data['xjp_report'] = $data['xjp_report'] ? 1 : 0;
+            $data['kl8_report'] = $data['kl8_report'] ? 1 : 0;
+            $data['lao_ao_report'] = $data['lao_ao_report'] ? 1 : 0;
+            $data['sys_update'] = $data['sys_update'] ? 1 : 0;
+            Redis::set('xg_report', $data['xg_report']);
+            Redis::set('xin_ao_report', $data['xin_ao_report']);
+            Redis::set('tian_ao_report', $data['tian_ao_report']);
+            Redis::set('tw_report', $data['tw_report']);
+            Redis::set('xjp_report', $data['xjp_report']);
+            Redis::set('kl8_report', $data['kl8_report']);
+            Redis::set('lao_ao_report', $data['lao_ao_report']);
+            Redis::set('sys_update', $data['sys_update']);
 
-        $data['wydun'] = $data['wydun'] ? 1 : 0;
-        $data['ad_img_url'] = str_replace(['http://', 'https://'], '', $data['ad_img_url']);
-        $result = $this->commonUpdate(AuthConfig::query(), 1, $data);
-        if ($result) {
-            file_put_contents('config.js', "var baseConfigs='" . json_encode(\Modules\Api\Models\AuthConfig::getinfo()) . "';");
-            (new BaseService())->ALiOssWith($data['config_js'], 'configs', 'config.js', '66tuku-config');
-            (new BaseService())->ALiOssWith($data['config_add_js'], 'configs', 'configAdd.js', '66tuku-config');
-            (new BaseService())->Upload2S3($data['config_js'], 'configs', 'config.js');
-            (new BaseService())->Upload2S3($data['config_add_js'], 'configs', 'configAdd.js');
-            (new BaseService())->Upload2S3($data['config_lottery_js'], 'configs', 'configLottery.js');
+            $data['wydun'] = $data['wydun'] ? 1 : 0;
+            $data['ad_img_url'] = str_replace(['http://', 'https://'], '', $data['ad_img_url']);
+            $result = $this->commonUpdate(AuthConfig::query(), 1, $data);
+            if ($result) {
+                file_put_contents('config.js', "var baseConfigs='" . json_encode(\Modules\Api\Models\AuthConfig::getinfo()) . "';");
+                (new BaseService())->ALiOssWith($data['config_js'], 'configs', 'config.js', '66tuku-config');
+                (new BaseService())->ALiOssWith($data['config_add_js'], 'configs', 'configAdd.js', '66tuku-config');
+                (new BaseService())->Upload2S3($data['config_js'], 'configs', 'config.js');
+                (new BaseService())->Upload2S3($data['config_add_js'], 'configs', 'configAdd.js');
+                (new BaseService())->Upload2S3($data['config_lottery_js'], 'configs', 'configLottery.js');
+            }
+            return $result;
+        }catch (\Exception $e){
+            dd($e->getMessage(), $e->getFile(), $e->getLine());
         }
-        return $result;
     }
 }
