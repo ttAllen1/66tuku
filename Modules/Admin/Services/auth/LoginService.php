@@ -33,7 +33,10 @@ class LoginService extends BaseApiService
         unset($data['google_code']);
         if (Auth::guard('auth_admin')->attempt($data)) {
             $userInfo = AuthAdminModel::query()->where(['username'=>$data['username']])->select('id','username', 'google_secret', 'status')->first();
-            $this->checkGoogleQrCode($userInfo['google_secret'], $google_code);
+            if (env('APP_ENV') != 'local') {
+                $this->checkGoogleQrCode($userInfo['google_secret'], $google_code);
+            }
+
             if($userInfo){
                 if ($userInfo['status'] != 1) {
                     $this->apiError('您的账号被禁用');
