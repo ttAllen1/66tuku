@@ -6,6 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redis;
+use Modules\Admin\Models\LotterySet;
 use Modules\Api\Models\HistoryNumber;
 use Modules\Api\Models\LiuheNumber;
 use Modules\Api\Models\LiuheOpenDay;
@@ -728,5 +729,19 @@ class LiuheService extends BaseApiService
             'total' => $lotteryVideo['total'],
             'list' => $lotteryVideo['data']
         ]);
+    }
+
+    /**
+     * 彩种类型列表
+     * @return JsonResponse
+     */
+    public function lottery(): JsonResponse
+    {
+        $list = LotterySet::query()
+            ->orderBy('lotteryType')
+            ->where('status', 1)
+            ->get()->toArray();
+
+        return $this->apiSuccess(ApiMsgData::GET_API_SUCCESS, $list);
     }
 }

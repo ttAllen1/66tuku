@@ -288,6 +288,8 @@ Route::group(["prefix"=>"v1", "middleware"=>["GlobalMiddleware"]],function (){
         Route::get('liuhe/next', 'v1\LiuheController@next');
         // 开奖回放
         Route::get('liuhe/video', 'v1\LiuheController@video');
+        // 彩种类型
+        Route::get('liuhe/lottery', 'v1\LiuheController@lottery');
 
         // 图库分类接口
         Route::get('picture/cate', 'v1\PictureController@cates');

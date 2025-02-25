@@ -131,4 +131,9 @@ class LiuheController extends BaseApiController
         return (new LiuheService())->video($request->input());
     }
 
+    public function lottery()
+    {
+        return (new LiuheService())->lottery();
+    }
+
 }
