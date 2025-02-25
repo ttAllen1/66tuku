@@ -144,7 +144,7 @@ class ConfigService extends BaseApiService
 
             $data['wydun'] = $data['wydun'] ? 1 : 0;
             $data['ad_img_url'] = str_replace(['http://', 'https://'], '', $data['ad_img_url']);
-            dd($data);
+//            dd($data);
             $result = $this->commonUpdate(AuthConfig::query(), 1, $data);
             if ($result) {
                 file_put_contents('config.js', "var baseConfigs='" . json_encode(\Modules\Api\Models\AuthConfig::getinfo()) . "';");
