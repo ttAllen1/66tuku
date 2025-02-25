@@ -413,6 +413,11 @@ Route::group(["prefix"=>"v1/admin","middleware"=>["AdminApiAuth", "CorsMiddlewar
     Route::get('liuhe_config/index', 'v1\LiuheConfigController@index');
     Route::put('liuhe_config/update', 'v1\LiuheConfigController@update');
     Route::post('liuhe_config/store', 'v1\LiuheConfigController@store');
+    /***********************************六合管理（彩种管理）***************************************/
+    Route::get('liuhe_lottery/index', 'v1\LiuheConfigController@liuhe_lottery_index');
+    Route::post('liuhe_lottery/create', 'v1\LiuheConfigController@liuhe_lottery_store');
+    Route::put('liuhe_lottery/update', 'v1\LiuheConfigController@liuhe_lottery_update');
+    Route::delete('liuhe_lottery/destroy', 'v1\LiuheConfigController@liuhe_lottery_delete');
     /***********************************六合管理（竞猜管理）***************************************/
     Route::get('liuhe_forecasts/index', 'v1\LiuheForecastsController@index');
     Route::put('liuhe_forecasts/update', 'v1\LiuheForecastsController@update');

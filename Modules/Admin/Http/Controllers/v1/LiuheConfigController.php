@@ -7,6 +7,7 @@
 namespace Modules\Admin\Http\Controllers\v1;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Modules\Admin\Http\Requests\CommonPageRequest;
 use Modules\Admin\Http\Requests\LiuheConfigRequest;
 use Modules\Admin\Services\liuhe\LiuHeConfigService;
@@ -33,5 +34,26 @@ class LiuheConfigController extends BaseApiController
     {
         $request->validate('create');
         return (new LiuHeConfigService())->store($request->except(['id']));
+    }
+
+    public function liuhe_lottery_index(CommonPageRequest $request)
+    {
+        return (new LiuHeConfigService())->liuhe_lottery_index($request->all());
+    }
+
+    public function liuhe_lottery_delete(Request $request)
+    {
+        return (new LiuHeConfigService())->liuhe_lottery_delete($request->input('id'));
+    }
+
+    public function liuhe_lottery_update(Request $request)
+    {
+        return (new LiuHeConfigService())->liuhe_lottery_update($request->input('id'), $request->except(['id']));
+    }
+
+    public function liuhe_lottery_store(LiuheConfigRequest $request)
+    {
+        $request->validate('liuhe_lottery_create');
+        return (new LiuHeConfigService())->liuhe_lottery_create($request->only(['lotteryType', 'name', 'status', 'icon', 'icons']));
     }
 }
