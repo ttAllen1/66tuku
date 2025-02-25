@@ -936,7 +936,7 @@ class BaseService
      * @param string $filename
      * @return void|null
      */
-    public function ALiOssWith($data, string $object='configs', string $filename='config.js', string $bucket='48tuku')
+    public function ALiOssWith($data, string $object='configs', string $filename='config.js', string $bucket='66tuku')
     {
         $accessKeyId = env('OSS_ACCESS_KEY_ID');
         $accessKeySecret = env('OSS_ACCESS_KEY_SECRET');
