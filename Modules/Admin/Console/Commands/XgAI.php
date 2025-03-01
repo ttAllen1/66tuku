@@ -2,11 +2,13 @@
 
 namespace Modules\Admin\Console\Commands;
 
-use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
+use Exception;
 
 class XgAI extends Command
 {
@@ -69,7 +71,7 @@ class XgAI extends Command
 
             // 2. 检查是否已存在
             $latestPeriod = $lists[0]['Period'];
-            $exists = DB::table('ai')->where('lotteryType', 1)->where('period', $latestPeriod)->exists();
+            $exists = DB::table('ais')->where('lotteryType', 1)->where('period', $latestPeriod)->exists();
             if ($exists) {
                 Log::info("AI 数据已存在, 跳过处理: Period = {$latestPeriod}");
                 return;
@@ -97,7 +99,7 @@ class XgAI extends Command
             }
 
             // 4. 批量插入数据
-            $this->batchInsert('ai', $data);
+            $this->batchInsert('ais', $data);
 
             Log::info("成功采集 AI 数据, 期数: {$latestPeriod}");
 

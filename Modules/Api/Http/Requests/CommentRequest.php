@@ -30,7 +30,7 @@ class CommentRequest extends FormRequest
             'cate'              => 'required|'.Rule::in([1, 2]),
             'location'          => 'required|'.Rule::in([1, 2]),
             'three_cate'        => 'required|'.Rule::in([1, 5]),
-            'type'              => 'required|'.Rule::in(1, 2, 3, 4, 5, 6, 9, 11),
+            'type'              => 'required|'.Rule::in(1, 2, 3, 4, 5, 6, 9, 11, 12),
             'target_id'         => 'required|is_positive_integer',
         ];
     }

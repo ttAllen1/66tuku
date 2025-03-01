@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Modules\Admin\Models\Ai;
 use Modules\Admin\Models\WebConfig;
 use Modules\Api\Models\CorpusArticle;
 use Modules\Api\Models\Discuss;
@@ -121,6 +122,12 @@ class CommentService extends BaseApiService
 //                $tarClass = Discuss::class;
                 $tarClass = UserComment::query()
                     ->where('commentable_type', 'Modules\Api\Models\Discuss');
+//                    ->where('commentable_id', $params['target_id']);
+                break;
+            case self::AIMODEL:
+//                $tarClass = Discuss::class;
+                $tarClass = UserComment::query()
+                    ->where('commentable_type', 'Modules\Admin\Models\Ai');
 //                    ->where('commentable_id', $params['target_id']);
                 break;
             case self::PICMODEL:
@@ -311,7 +318,7 @@ class CommentService extends BaseApiService
             $createData['up_id']        = 0;
             $createData['up_user_id']   = 0;
             $createData['level']        = 1;
-            if ( $params['type'] == self::PICMODEL || $params['type'] == self::PICDIAGRAMMODEL || $params['type'] == self::FORECAST || $params['type'] == self::DISCOVERYMODEL || $params['type'] == self::DISCUSSMODEL || $params['type'] == self::HUMOROUSMODEL || $params['type'] == self::CORPUSARTICES ) {
+            if ( $params['type'] == self::PICMODEL || $params['type'] == self::PICDIAGRAMMODEL || $params['type'] == self::FORECAST || $params['type'] == self::DISCOVERYMODEL || $params['type'] == self::DISCUSSMODEL || $params['type'] == self::HUMOROUSMODEL || $params['type'] == self::CORPUSARTICES || $params['type'] == self::AIMODEL ) {
                 $targetOrm->increment('commentCount');
             }
             if ( $params['type'] == self::COMMENTMODEL ) {
@@ -637,6 +644,9 @@ class CommentService extends BaseApiService
                     break;
                 case self::HUMOROUSMODEL:     // 幽默竞猜
                     $orm = Humorous::query()->findOrFail($target_id, ['id']);
+                    break;
+                case self::AIMODEL:     // ai分析
+                    $orm = Ai::query()->findOrFail($target_id, ['id']);
                     break;
                 default:
                     $orm = new UserComment();
