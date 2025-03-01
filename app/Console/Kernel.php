@@ -59,6 +59,7 @@ use Modules\Admin\Console\Commands\TongbuDb;
 use Modules\Admin\Console\Commands\UpdateChatAvatar;
 use Modules\Admin\Console\Commands\VideoCommand;
 use Modules\Admin\Console\Commands\WriteRecommend;
+use Modules\Admin\Console\Commands\XgAI;
 use Modules\Admin\Console\Commands\YearPicIssues;
 use Modules\Admin\Console\Commands\ZanMoney;
 use Modules\Admin\Jobs\LastMonthViews;
@@ -131,7 +132,8 @@ class Kernel extends ConsoleKernel
         SpiderComments::class,
         TgSend::class,
         MemberLimit::class,
-        GenGamePeriods::class
+        GenGamePeriods::class,
+        XgAI::class
     ];
 
     /**
@@ -174,6 +176,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('module:spider-comment')->everyThirtyMinutes()->withoutOverlapping()->runInBackground();
 
         $schedule->command('module:gen-game-periods')->dailyAt('23:30')->withoutOverlapping()->runInBackground();
+
+        $schedule->command('module:xg-ai')->everyFiveMinutes()->withoutOverlapping()->runInBackground();
     }
 
     /**

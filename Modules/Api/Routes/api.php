@@ -396,7 +396,10 @@ Route::group(["prefix"=>"v1", "middleware"=>["GlobalMiddleware"]],function (){
         Route::get('tg/send', 'v1\ThreeController@send');
 
 
-
+        // ai
+        Route::get('ai/config', 'v1\AiController@config');
+        Route::get('ai/list', 'v1\AiController@list');
+        Route::get('ai/detail', 'v1\AiController@detail');
 
     });
 });
