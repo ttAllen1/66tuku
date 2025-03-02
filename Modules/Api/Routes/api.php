@@ -400,6 +400,7 @@ Route::group(["prefix"=>"v1", "middleware"=>["GlobalMiddleware"]],function (){
         Route::get('ai/config', 'v1\AiController@config');
         Route::get('ai/list', 'v1\AiController@list');
         Route::get('ai/detail', 'v1\AiController@detail');
+        Route::get('index/guess', 'v1\IndexController@guess');
 
     });
 });

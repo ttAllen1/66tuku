@@ -4,9 +4,11 @@ namespace Modules\Api\Services\index;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redis;
 use Modules\Api\Models\Activite;
 use Modules\Api\Models\CorpusType;
+use Modules\Api\Models\IndexGuess;
 use Modules\Api\Services\ad\AdService;
 use Modules\Api\Services\BaseApiService;
 use Modules\Api\Services\config\ConfigService;
@@ -173,5 +175,22 @@ class IndexService extends BaseApiService
             ->get(['id', 'lotteryType', 'corpusTypeName'])->toArray();
 
         return $this->apiSuccess(ApiMsgData::GET_API_SUCCESS, $list);
+    }
+
+    /**
+     * 首页猜测
+     * @param $params
+     * @return JsonResponse
+     */
+    public function guess($params): JsonResponse
+    {
+        return $this->apiSuccess(ApiMsgData::GET_API_SUCCESS, Cache::remember('guess_list', 60, function () use ($params) {
+            return IndexGuess::query()
+                ->where('lotteryType', $params['lotteryType'])
+                ->orderByDesc('created_at')
+                ->limit(10)
+                ->get(['period', 'te_num', 'num_10', 'num_5', 'num_1', 'rec_9', 'rec_6', 'rec_3', 'rec_1'])
+                ->toArray();
+        }));
     }
 }
