@@ -134,7 +134,7 @@ class IndexGuess extends Command
 
             DB::table('index_guesses')->insert([
                 'lotteryType' => $lottery,
-                'issue'       => $nextIssue,
+                'period'      => $nextIssue,
                 'year'        => $year,
                 'te_num'      => '00',
                 'num_10'      => $numData['num_10'],
