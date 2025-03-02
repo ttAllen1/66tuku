@@ -29,6 +29,7 @@ use Modules\Admin\Console\Commands\HkLive;
 use Modules\Admin\Console\Commands\HumorousGuess;
 use Modules\Admin\Console\Commands\HumorousGuessAm;
 use Modules\Admin\Console\Commands\HumorousGuessOldAm;
+use Modules\Admin\Console\Commands\IndexGuess;
 use Modules\Admin\Console\Commands\Kl8IndexPic;
 use Modules\Admin\Console\Commands\Kl8YearPic;
 use Modules\Admin\Console\Commands\LiuheOpenDate;
@@ -133,7 +134,8 @@ class Kernel extends ConsoleKernel
         TgSend::class,
         MemberLimit::class,
         GenGamePeriods::class,
-        XgAI::class
+        XgAI::class,
+        IndexGuess::class
     ];
 
     /**
