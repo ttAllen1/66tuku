@@ -176,7 +176,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
         Mews\Captcha\CaptchaServiceProvider::class,
-        Intervention\Image\ImageServiceProvider::class
+//        Intervention\Image\ImageServiceProvider::class
     ],
 
     /*
