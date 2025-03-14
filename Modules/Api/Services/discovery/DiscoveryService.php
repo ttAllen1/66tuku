@@ -39,7 +39,6 @@ class DiscoveryService extends BaseApiService
 //            throw new CustomException(['message'=>'30秒后发布']);
 //        }
         try {
-            dd($params);
             DB::beginTransaction();
             $current_year = date('Y');
             $checkStatus = $this->getCheckStatus(8);
