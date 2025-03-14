@@ -232,7 +232,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Captcha' => Mews\Captcha\Facades\Captcha::class,
         'Batch' => Mavinoo\Batch\BatchFacade::class,
-        'Image' => Intervention\Image\Facades\Image::class,
+//        'Image' => Intervention\Image\Facades\Image::class,
     ],
 
 ];
