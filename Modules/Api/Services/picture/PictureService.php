@@ -1017,6 +1017,7 @@ class PictureService extends BaseApiService
             $image = [];
 
             $imageInfo = Image::make($img_url);
+            dd($imageInfo);
 
 
             $image['width'] = $imageInfo->width();
