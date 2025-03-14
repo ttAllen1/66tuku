@@ -75,7 +75,7 @@ class DiscoveryService extends BaseApiService
             DB::commit();
         }catch (\Exception $exception) {
             DB::rollBack();
-            throw new CustomException(['message'=>"请稍后重试"]);
+            throw new CustomException(['message'=>$exception->getMessage()]);
         }
 
         return $this->apiSuccess(ApiMsgData::POST_API_SUCCESS);
