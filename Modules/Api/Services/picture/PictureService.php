@@ -1015,9 +1015,7 @@ class PictureService extends BaseApiService
         }
         try {
             $image = [];
-            dd($img_url, Image::make('upload/images/20250314/6aYW5idNeRByBwrwz8rNnhSeUygsp6fIlMzBt9hs.png'));
             $imageInfo = Image::make($img_url);
-            dd($imageInfo);
 
 
             $image['width'] = $imageInfo->width();
