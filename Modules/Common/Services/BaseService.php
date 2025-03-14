@@ -1093,7 +1093,7 @@ class BaseService
      */
     public function getNextIssue($lotteryType)
     {
-        return 279;
+//        return 279;
         $arr = Redis::get('real_open_' . $lotteryType);
 
         if ($arr) {
