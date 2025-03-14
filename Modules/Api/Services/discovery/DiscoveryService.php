@@ -75,7 +75,7 @@ class DiscoveryService extends BaseApiService
             DB::commit();
         }catch (\Exception $exception) {
             DB::rollBack();
-            throw new CustomException(['message'=>$exception->getMessage()]);
+            throw new CustomException(['message'=>$exception->getMessage(), $exception->getFile(), $exception->getLine()]);
         }
 
         return $this->apiSuccess(ApiMsgData::POST_API_SUCCESS);
