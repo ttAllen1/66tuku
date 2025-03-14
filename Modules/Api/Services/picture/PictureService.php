@@ -1016,6 +1016,7 @@ class PictureService extends BaseApiService
         try {
             $image = [];
             $imageInfo = Image::make($img_url);
+            dd($imageInfo);
 
 
             $image['width'] = $imageInfo->width();
@@ -1068,7 +1069,7 @@ class PictureService extends BaseApiService
                 $imageInfo->save($img_url);
             }
             return $image;
-        } catch (ImageException $exception) {
+        } catch (ImageException|\Exception $exception) {
             Log::info('图片失败', ['message' => $exception->getMessage()]);
             throw new CustomException(['message' => $exception->getMessage(), $exception->getFile(), $exception->getLine()]);
         }
