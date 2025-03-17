@@ -165,4 +165,15 @@ class PictureController extends BaseApiController
         $request->validate('video');
         return (new PictureService())->get_video_list($request->all());
     }
+
+    /**
+     * 图片AI分析
+     * @param PictureRequest $request
+     * @return JsonResponse
+     */
+    public function ai_analyze(PictureRequest $request): JsonResponse
+    {
+        $request->validate('ai_analyze');
+        return (new PictureService())->ai_analyze($request->all());
+    }
 }

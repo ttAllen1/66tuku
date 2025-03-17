@@ -77,6 +77,7 @@ class PictureRequest extends FormRequest
             'recommend'     => ['pictureTypeId', 'year', 'page', 'lotteryType'],
             'series_detail' => ['id'],
             'video' => ['lotteryType'],
+            'ai_analyze' => ['lotteryType', 'pictureTypeId', 'year'],
         ];
     }
 }

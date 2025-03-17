@@ -528,6 +528,7 @@ class PictureService extends BaseApiService
             // 详情广告
 //        $adList = (new AdService())->getAdListByPoi([2]);
 //        $obj['adList'] = $adList;
+            $obj['PicDetailData']['ai_analyzes'] = [];
             DB::commit();
             return $this->apiSuccess(ApiMsgData::GET_API_SUCCESS, $obj);
         }catch (\Exception $exception) {
@@ -1016,8 +1017,6 @@ class PictureService extends BaseApiService
         try {
             $image = [];
             $imageInfo = Image::make($img_url);
-            dd($imageInfo);
-
 
             $image['width'] = $imageInfo->width();
             $image['height'] = $imageInfo->height();
@@ -1147,5 +1146,32 @@ class PictureService extends BaseApiService
             ->get()->toArray();
 
         return $this->apiSuccess(ApiMsgData::GET_API_SUCCESS, $results);
+    }
+
+    /**
+     * 获取ai分析数据
+     * @param $params
+     * @return JsonResponse
+     */
+    public function ai_analyze($params): JsonResponse
+    {
+        if ($rdsData = Redis::get('ai_analyze_'. $params['lotteryType']. '_'. $params['pictureTypeId']. '_'. $params['year'])) {
+            return response()->json(json_decode($rdsData, true));
+        }
+        $data = Http::get(config('config.49_server_url').'/api/v1/picture/ai_analyze', [
+            'lotteryType' => $params['lotteryType'],
+            'pictureTypeId' => $params['pictureTypeId'],
+            'year' => $params['year'],
+        ]);
+        if ($data->status() != 200) {
+            return $this->apiSuccess();
+        }
+        $data = json_decode($data->body(), true);
+
+        if (!$data) {
+            return $this->apiSuccess();
+        }
+        Redis::setex('ai_analyze_'. $params['lotteryType']. '_'. $params['pictureTypeId']. '_'. $params['year'], 3600, json_encode($data));
+        return response()->json($data);
     }
 }

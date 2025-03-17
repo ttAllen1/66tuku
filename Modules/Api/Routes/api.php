@@ -129,6 +129,10 @@ Route::group(["prefix"=>"v1", "middleware"=>["GlobalMiddleware"]],function (){
                 Route::post('discovery/create', 'v1\DiscoveryController@create');      // 发布
                 // 高手论坛
                 Route::post('discuss/create', 'v1\DiscussController@create');  // 发布
+
+                // 高手榜
+                Route::post('expert/create', 'v1\ExpertController@create');  // 发布
+                Route::post('expert/previous', 'v1\ExpertController@previous');
             });
 
             // 资金出入站
@@ -296,6 +300,7 @@ Route::group(["prefix"=>"v1", "middleware"=>["GlobalMiddleware"]],function (){
         // 图库详情接口
         Route::get('picture/detail', 'v1\PictureController@detail');
         Route::get('picture/details', 'v1\PictureController@details');
+        Route::get('picture/ai_analyze', 'v1\PictureController@ai_analyze');
         Route::get('picture/issues', 'v1\PictureController@issues');    // 图片期数
         Route::get('picture/recommend', 'v1\PictureController@recommend');    // 图片推荐
         Route::get('picture/video', 'v1\PictureController@video');    // 图片视频解析
@@ -344,6 +349,9 @@ Route::group(["prefix"=>"v1", "middleware"=>["GlobalMiddleware"]],function (){
         // 高手论坛
         Route::get('discuss/list', 'v1\DiscussController@list');  // 列表
         Route::get('discuss/detail', 'v1\DiscussController@detail');  // 主题详情
+
+        Route::get('expert/list', 'v1\ExpertController@list');  // 列表
+        Route::get('expert/detail', 'v1\ExpertController@detail');  // 主题详情
 
         Route::get('room/list', 'v1\RoomController@list');      // 聊天室房间列表
         Route::get('red_packet/list', 'v1\RedPacketController@list'); // 聊天室红包列表
