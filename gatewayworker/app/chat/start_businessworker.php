@@ -9,11 +9,13 @@ use \Workerman\Autoloader;
  */
 
 require_once __DIR__ . '/../../vendor/autoload.php';
-
+require_once __DIR__ . '/Events.php';
 $worker = new BusinessWorker();
 $worker->name = 'ChatBusinessWorker1';
 $worker->count = 4;
 $worker->registerAddress = '127.0.0.1:1238'; // 用于和Gateway进程通信，与Gateway进程的注册地址保持一致
+
+$worker->eventHandler = 'Events';
 
 if (!defined('GLOBAL_START')) {
     Worker::runAll();
