@@ -307,6 +307,9 @@ Route::group(["prefix"=>"v1", "middleware"=>["GlobalMiddleware"]],function (){
         Route::get('pic_series/list', 'v1\PictureController@series_list'); // 图库系列相关
         Route::get('pic_series/detail', 'v1\PictureController@series_detail'); // 图库系列相关
 
+        // 照片墙
+        Route::get('picture/flow', 'v1\PictureController@flow');
+
         // 图解列表
         Route::get('diagram/list', 'v1\DiagramController@list');
         // 详情

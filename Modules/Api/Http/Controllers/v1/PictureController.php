@@ -176,4 +176,16 @@ class PictureController extends BaseApiController
         $request->validate('ai_analyze');
         return (new PictureService())->ai_analyze($request->all());
     }
+
+    /**
+     * 图片流水
+     * @param PictureRequest $request
+     * @return JsonResponse
+     */
+    public function flow(PictureRequest $request): JsonResponse
+    {
+        $request->validate('index');
+
+        return (new PictureService())->get_flow_list($request->all());
+    }
 }

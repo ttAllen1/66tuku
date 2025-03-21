@@ -1174,4 +1174,80 @@ class PictureService extends BaseApiService
         Redis::setex('ai_analyze_'. $params['lotteryType']. '_'. $params['pictureTypeId']. '_'. $params['year'], 3600, json_encode($data));
         return response()->json($data);
     }
+
+    public function get_flow_list($params)
+    {
+        try {
+            $userId = auth('user')->id() ?? 0;
+//        if ($userId) {
+            $res = IndexPic::query()
+                ->where('color', 1)
+                ->where('lotteryType', $params['lotteryType'])
+                ->orderBy('sort')
+                ->with([
+                    'picDetail' => function ($query) {
+                        $query->select([
+                            'id', 'pictureTypeId', 'issue', 'pictureName', 'clickCount', 'collectCount', 'commentCount',
+                            'thumbUpCount', 'keyword', 'color', 'lotteryType', 'year'
+                        ]);
+                    }, 'picOther' => function ($query) use ($params) {
+                        $query->where('year', date('Y'))->select(['pictureTypeId', 'keyword', 'max_issue', 'year']);
+//                    $query->where('year', date('Y'))->select(['pictureTypeId', 'keyword', 'max_issue', 'year']);
+//                if ($params['lotteryType'] == 3 || $params['lotteryType'] == 1) {
+//                    $query->where('year', 2024)->select(['pictureTypeId', 'keyword', 'max_issue', 'year']);
+//                } else {
+//                    $query->where('year', date('Y'))->select(['pictureTypeId', 'keyword', 'max_issue', 'year']);
+//                }
+                    }
+                ])
+                ->simplePaginate(10, [
+                    'id', 'lotteryType', 'pictureTypeId', 'pictureName', 'color', 'width', 'height'
+                ])->toArray();
+//        }
+
+            if (!$res['data']) {
+                return $this->apiSuccess();
+            }
+            $list = $res['data'];
+            $pidDetailIds = [];
+            foreach ($list as $k => $v) {
+                $list[$k]['is_thumbUp'] = false;
+                $list[$k]['is_collect'] = false;
+                if (!empty($v['pic_detail'])) {
+                    $pidDetailIds[] = $v['pic_detail']['id'];
+                }
+            }
+
+//        dd($pidDetailIds);
+            if ($userId && $pidDetailIds) {
+                $thumbUpIds = DB::table('user_follows')
+                    ->where('followable_type', 'Modules\\Api\\Models\\PicDetail')
+                    ->where('user_id', $userId)
+                    ->whereIn('followable_id', $pidDetailIds)
+                    ->pluck('followable_id')->toArray();
+//            dd($thumbUpIds);
+
+                $collectIds = DB::table('user_collects')
+                    ->where('collectable_type', 'Modules\\Api\\Models\\PicDetail')
+                    ->where('user_id', $userId)
+                    ->whereIn('collectable_id', $pidDetailIds)
+                    ->pluck('collectable_id')->toArray();
+//            dd($collectIds);
+                foreach ($list as $k => $v) {
+                    if (isset($v['pic_detail']['id']) && in_array($v['pic_detail']['id'], $thumbUpIds)) {
+                        $list[$k]['is_thumbUp'] = true;
+                    }
+                    if (isset($v['pic_detail']['id']) && in_array($v['pic_detail']['id'], $collectIds)) {
+                        $list[$k]['is_collect'] = true;
+                    }
+                    // 图片
+                    $list[$k]['largePictureUrl'] = $this->getPicUrl($v['color'], $v['pic_other']['max_issue'], $v['pic_other']['keyword'], $params['lotteryType'], 'jpg', $v['pic_other']['year'], true);
+                }
+            }
+
+            return $this->apiSuccess(ApiMsgData::GET_API_SUCCESS, $list);
+        } catch (\Exception $exception) {
+            dd($exception->getMessage(), $exception->getLine(), $exception->getFile());
+        }
+    }
 }
