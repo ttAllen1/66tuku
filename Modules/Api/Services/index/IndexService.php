@@ -184,7 +184,7 @@ class IndexService extends BaseApiService
      */
     public function guess($params): JsonResponse
     {
-        return $this->apiSuccess(ApiMsgData::GET_API_SUCCESS, Cache::remember('guess_list', 60, function () use ($params) {
+        return $this->apiSuccess(ApiMsgData::GET_API_SUCCESS, Cache::remember('guess_list_lotteryType_'.$params['lotteryType'], 60, function () use ($params) {
             return IndexGuess::query()
                 ->where('lotteryType', $params['lotteryType'])
                 ->orderByDesc('created_at')
