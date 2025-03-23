@@ -1216,6 +1216,8 @@ class PictureService extends BaseApiService
                 if (!empty($v['pic_detail'])) {
                     $pidDetailIds[] = $v['pic_detail']['id'];
                 }
+                // 图片
+                $list[$k]['largePictureUrl'] = $this->getPicUrl($v['color'], $v['pic_other']['max_issue'], $v['pic_other']['keyword'], $params['lotteryType'], 'jpg', $v['pic_other']['year'], true);
             }
 
 //        dd($pidDetailIds);
@@ -1240,8 +1242,7 @@ class PictureService extends BaseApiService
                     if (isset($v['pic_detail']['id']) && in_array($v['pic_detail']['id'], $collectIds)) {
                         $list[$k]['is_collect'] = true;
                     }
-                    // 图片
-                    $list[$k]['largePictureUrl'] = $this->getPicUrl($v['color'], $v['pic_other']['max_issue'], $v['pic_other']['keyword'], $params['lotteryType'], 'jpg', $v['pic_other']['year'], true);
+
                 }
             }
 
