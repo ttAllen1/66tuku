@@ -46,7 +46,7 @@ class DiagramRequest extends FormRequest
             'page.required'                     => '页码不能为空！',
             'page.is_positive_integer'          => '页码必须为整数！',
             'lotteryType.required'              => '彩票分类不能为空！',
-            'lotteryType.in'                    => '彩票分类在1~5之间！',
+            'lotteryType.in'                    => '彩票ID不存在！',
             'title.required'                    => '请输入标题！',
             'title.max'                         => '标题长度不能超过255位字符！',
             'title.min'                         => '标题长度不能小于2位字符！',

@@ -49,7 +49,7 @@ class PictureRequest extends FormRequest
             'page.required'                     => '页码不能为空！',
             'page.is_positive_integer'          => '页码必须为整数！',
             'lotteryType.required'              => '彩票分类不能为空！',
-            'lotteryType.in'                    => '彩票分类在1~5之间！',
+            'lotteryType.in'                    => '彩票ID不存在！',
             'year.required'                     => '年份不能为空！',
             'year.is_positive_integer'          => '年份格式应为整数！',
             'color.required'                    => '颜色不能为空！',

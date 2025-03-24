@@ -46,7 +46,7 @@ class HumorousRequest extends FormRequest
             'year.required'                     => '年份不能为空！',
             'year.is_positive_integer'          => '年份必须为整数！',
             'lotteryType.required'              => '彩票分类不能为空！',
-            'lotteryType.in'                    => '彩票分类在1~5之间！',
+            'lotteryType.in'                    => '彩票ID不存在！',
             'vote_zodiac.required'              => '生肖不能为空！',
             'vote_zodiac.in'                    => '生肖字段不正确！',
         ];

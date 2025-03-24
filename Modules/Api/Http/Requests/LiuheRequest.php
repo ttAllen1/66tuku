@@ -45,7 +45,7 @@ class LiuheRequest extends FormRequest
             'issue.required'                        => '期号不能为空！',
             'issue.is_positive_integer'             => '期号必须为整数！',
             'lotteryType.required'                  => '彩票分类不能为空！',
-            'lotteryType.in'                        => '彩票分类在1~6之间！',
+            'lotteryType.in'                        => '彩票ID不存在！',
             'sort.required'                         => '排序不能为空！',
             'sort.in'                               => '排序在\'asc\'和\'desc\'之间！',
         ];

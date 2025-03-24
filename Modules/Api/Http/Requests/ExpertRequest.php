@@ -46,7 +46,7 @@ class ExpertRequest extends FormRequest
             'id.required'                       => 'ID不能为空！',
             'id.is_positive_integer'            => 'ID格式应为整数！',
             'lotteryType.required'              => '类型不能为空！',
-            'lotteryType.in'                    => '类型在0~5之间！',
+            'lotteryType.in'                    => '彩票ID不存在！',
             'type.required'                     => '分类不能为空！',
             'type.in'                           => '分类在1~2之间！',
             'cate.required'                     => '分类不能为空！',

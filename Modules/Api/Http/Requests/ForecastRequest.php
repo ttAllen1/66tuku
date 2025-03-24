@@ -62,7 +62,7 @@ class ForecastRequest extends FormRequest
             'year.required'                        => '年份不能为空！',
             'year.is_positive_integer'             => '年份必须为整数！',
             'lotteryType.required'                 => '彩票分类不能为空！',
-            'lotteryType.in'                       => '彩票分类在1~5之间！',
+            'lotteryType.in'                       => '彩票ID不存在！',
             'bet_list.required'                    => '投注参数不能为空！',
             'each_bet_money.required'              => '每一注金额不能为空！',
             'bet_money.required'                   => '总投注金额不能为空！',

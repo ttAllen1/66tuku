@@ -33,7 +33,7 @@ class OpenLotteryRequest extends FormRequest
     public function messages(){
         return [
             'lotteryType.required'              => '彩票分类不能为空！',
-            'lotteryType.in'                    => '彩票分类在1~4之间！',
+            'lotteryType.in'                    => '彩票ID不存在！',
             'client_id.required'                => 'client_id必传！',
         ];
     }
