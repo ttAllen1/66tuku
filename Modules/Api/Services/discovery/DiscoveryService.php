@@ -100,6 +100,7 @@ class DiscoveryService extends BaseApiService
 //        }
         $userDiscovery = UserDiscovery::query()
 //            ->where('issue', $maxIssue)
+            ->where('created_at', '>=', '2025-03-25 00:00:00')
             ->where('status', 1)
             ->where('type', $params['type'])
             ->when($params['is_rec'] != 2, function($query) use($params) {
