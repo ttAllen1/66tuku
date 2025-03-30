@@ -192,8 +192,8 @@ class PictureService extends BaseApiService
                                 $pic_lists['data'][$k]['pictureUrl'] = str_replace($v.'col/', 'https://am.tuku.fit/galleryfiles/system/m/col/', $pic_lists['data'][$k]['pictureUrl']);
                                 $pic_lists['data'][$k]['previousPictureUrl'] = str_replace($v.'col/', 'https://am.tuku.fit/galleryfiles/system/m/col/', $pic_lists['data'][$k]['previousPictureUrl']);
                             } else if (in_array($list['pictureTypeId'], $this->_xg_pictureIds)) {
-                                $pic_lists['data'][$k]['pictureUrl'] = str_replace($v.'m/col/', 'https://xg.tuku.fit/galleryfiles/system/big-pic/col/'.$pic_lists['data'][$k]['year'].'/', $pic_lists['data'][$k]['pictureUrl']);
-                                $pic_lists['data'][$k]['previousPictureUrl'] = str_replace($v.'m/col/', 'https://xg.tuku.fit/galleryfiles/system/big-pic/col/'.$pic_lists['data'][$k]['year'].'/', $pic_lists['data'][$k]['previousPictureUrl']);
+                                $pic_lists['data'][$k]['pictureUrl'] = str_replace([$v . 'm/col/', $v . '/m/col/'], 'https://xg.tuku.fit/galleryfiles/system/big-pic/col/'.$pic_lists['data'][$k]['year'].'/', $pic_lists['data'][$k]['pictureUrl']);
+                                $pic_lists['data'][$k]['previousPictureUrl'] = str_replace([$v . 'm/col/', $v . '/m/col/'], 'https://xg.tuku.fit/galleryfiles/system/big-pic/col/'.$pic_lists['data'][$k]['year'].'/', $pic_lists['data'][$k]['previousPictureUrl']);
                             }
                         }
                     }
