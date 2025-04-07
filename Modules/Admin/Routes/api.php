@@ -223,6 +223,7 @@ Route::group(["prefix"=>"v1/admin","middleware"=>["AdminApiAuth", "CorsMiddlewar
     Route::get('picture/list', 'v1\PictureController@list');
     Route::put('picture/update', 'v1\PictureController@update');
     Route::post('picture/create', 'v1\PictureController@store');
+    Route::delete('picture/delete', 'v1\PictureController@delete');
     Route::post('picture/create_diagram', 'v1\PictureController@store_diagram');
     /***********************************图库管理（视频解析列表）***************************************/
     Route::get('picture/video_list', 'v1\PictureController@video_list');
