@@ -66,7 +66,7 @@ class IndexGuess extends Command
             $rdsData = $this->getRedisDataWithRetry($lottery);
             $nextIssue = $rdsData['next_issue'] ?? null;
 
-            if (!$nextIssue || $latestPeriod === $nextIssue) {
+            if (!$nextIssue || $latestPeriod === $nextIssue || in_array($rdsData['current_te_num'], ["后", "快", "步"])) {
                 return;
             }
 
@@ -76,6 +76,12 @@ class IndexGuess extends Command
         } catch (\Throwable $e) {
             Log::error("彩票类型 {$lottery} 处理失败: " . $e->getMessage());
         }
+    }
+
+    function isChineseCharacter(string $char): bool
+    {
+        // 使用正则匹配 CJK Unified Ideographs 范围（中文汉字主要集中在这里）
+        return preg_match('/^[\x{4e00}-\x{9fa5}]$/u', $char) === 1;
     }
 
     /**
