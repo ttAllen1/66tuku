@@ -3,7 +3,6 @@
 namespace Modules\Admin\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -12,240 +11,147 @@ use Symfony\Component\Console\Input\InputOption;
 
 class AutoXgAmMaxIssues extends Command
 {
-    // 配置项移至常量提升可维护性
-    private const MAX_RETRIES = 3;
-    private const RETRY_DELAY = 1000; // 毫秒
-    private const BATCH_UPDATE_SIZE = 2;
     protected $_pic_configs = [
         [
             'type'      => 1,
             'color'     => 1,
-            'year'      => 2025,
             'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=1",
         ],
         [
             'type'      => 1,
             'color'     => 2,
-            'year'      => 2025,
             'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=2",
         ],
         [
             'type'      => 2,
             'color'     => 1,
-            'year'      => 2025,
             'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=1",
         ],
         [
             'type'      => 2,
             'color'     => 2,
-            'year'      => 2025,
             'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=2",
         ]
     ];
 
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'module:auto-xg-am-max-issue';       // 理论上一次性执行即可
+    protected $signature = 'module:auto-xg-am-max-issue';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = '将49图库的首页图片信息写库，方便调用.执行一次即可';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         parent::__construct();
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
     public function handle()
     {
-        $h = date('H');
-        $i = date('i');
-        if ($h == 21 && $i < 40) {
-            $this->info('当前时间不允许执行');
+        foreach ($this->_pic_configs as $v) {
+            // 开始进行数据抓取和处理
+            $this->processData($v);
+        }
+    }
+
+    /**
+     * 处理指定配置的图片数据。
+     *
+     * @param array $config 配置项
+     */
+    public function processData($config)
+    {
+        // 重试机制，避免请求失败
+        $response = null;
+        $retryCount = 3;
+        while ($retryCount > 0) {
+            $response = Http::withHeaders([
+                'LotteryType' => $config['type'],
+                'User-Agent'  => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+            ])->withOptions([
+                'verify' => false
+            ])->get($config['url']);
+
+            if ($response->status() == 200) {
+                break;
+            } else {
+                Log::error('请求失败，状态码：' . $response->status());
+                $retryCount--;
+                if ($retryCount == 0) {
+                    Log::error('请求失败，重试次数已达上限');
+                    return;
+                }
+                sleep(1); // 小延迟再重试
+            }
+        }
+
+        $res = json_decode($response->body(), true);
+
+        // 检查返回数据是否有效
+        if ($res['code'] != 10000 || empty($res['data']['list'])) {
+            Log::error('命令【module:am-index-pic】数据格式错误或为空');
             return;
         }
-        try {
-            foreach ($this->_pic_configs as $config) {
-                $this->processConfig($config);
-            }
-            $this->info('所有配置处理完成');
-        } catch (\Exception $e) {
-            Log::error('命令执行异常: '.$e->getMessage(), ['trace' => $e->getTrace()]);
-            $this->error('处理失败: '.$e->getMessage() ."line: " . $e->getLine());
-        }
-    }
 
-    private function processConfig(array $config): void
-    {
-        $response = $this->fetchDataWithRetry($config['url'], $config['type']);
-        $data = $this->validateResponse($response);
+        $list = $res['data']['list'];
 
-        $this->processItems(
-            $data['data']['list'],
-            $data['data']['year'],
-            $config
-        );
-    }
-
-    private function fetchDataWithRetry(string $url, int $type)
-    {
-        return retry(self::MAX_RETRIES, function() use ($url, $type) {
-            $response = Http::withHeaders([
-                'LotteryType' => $type,
-                'User-Agent' => config('app.user_agent')
-            ])
-                ->withOptions(['verify' => false])
-                ->timeout(10)
-                ->get($url);
-
-            if ($response->failed()) {
-                throw new \Exception("HTTP请求失败: {$response->status()}");
-            }
-            return $response;
-        }, self::RETRY_DELAY);
-    }
-
-    private function validateResponse($response): array
-    {
-        $data = $response->json();
-
-        if (!Arr::has($data, ['code', 'data.list'])) {
-            throw new \Exception('无效的响应结构');
-        }
-
-        if ($data['code'] !== 10000 || empty($data['data']['list'])) {
-            throw new \Exception('业务逻辑错误: '.($data['message'] ?? '未知错误'));
-        }
-
-        return $data;
-    }
-
-    private function processItems(array $items, int $year, array $config): void
-    {
-        $existingIssue = $this->getExistingIssue($year, $config);
-        $updates = [];
-
-        foreach ($items as $item) {
-            $updates[] = $this->prepareUpdateData($item,  $year, $existingIssue);
-
-            // 批量更新
-            if (count($updates) >= self::BATCH_UPDATE_SIZE) {
-                $this->executeBatchUpdate($updates, $config);
-                $updates = [];
-            }
-        }
-
-        // 处理剩余数据
-        if (!empty($updates)) {
-            $this->executeBatchUpdate($updates, $config);
-        }
-    }
-
-    private function getExistingIssue(int $year, array $config): ?array
-    {
-        $result = DB::table('year_pics')
-            ->where('year', $year)
+        // 获取对应的year_pics的当前`issues`数据
+        $issues = DB::table('year_pics')
+            ->where('year', $res['data']['year'])
             ->where('color', $config['color'])
             ->where('is_add', 0)
-            ->where('is_delete', 0)
             ->where('lotteryType', $config['type'])
-            ->select('issues')
-            ->first();
+            ->value('issues');
 
-        return $result ? json_decode($result->issues, true) : null;
-    }
-
-    private function prepareUpdateData(array $item, int $year, ?array &$existingIssue): array
-    {
-        $update = [
-            'max_issue' => $item['number'],
-            'keyword' => $item['keyword'],
-            'year' => $year,
-            'color' => $item['color'],
-            'lotteryType' => $item['lotteryType'],
-            'pictureTypeId' => $item['pictureTypeId']
-        ];
-
-        if ($existingIssue) {
-            array_unshift($existingIssue, "第{$item['number']}期");
-            $update['issues'] = json_encode($existingIssue);
+        if (!$issues) {
+            Log::info('没有找到相关记录，跳过处理');
+            return;
         }
 
-        return $update;
+        $issues = json_decode($issues, true);
+        array_unshift($issues, "第" . $list[0]['number'] . "期");
+
+        // 更新数据库时，使用批量更新，避免每次循环都操作数据库
+        $updateData = [];
+        foreach ($list as $v) {
+            $updateData[] = [
+                'year'             => $res['data']['year'],
+                'color'            => $v['color'],
+                'keyword'          => $v['keyword'],
+                'lotteryType'      => $config['type'],
+                'pictureTypeId'    => $v['pictureTypeId'],
+                'max_issue'        => $v['number'],
+                'issues'           => json_encode($issues),
+            ];
+        }
+
+        // 批量更新操作
+        $this->batchUpdate($updateData);
     }
 
-    private function executeBatchUpdate(array $updates, array $config): void
+    /**
+     * 批量更新数据库中的记录
+     *
+     * @param array $updateData 要更新的数据
+     */
+    public function batchUpdate($updateData)
     {
-        dd($updates, $config);
+        // 这里可以根据实际情况，使用事务批量更新，或者使用 `upsert` 方法
+        DB::beginTransaction();
         try {
-            DB::transaction(function () use ($updates, $config) {
-                // 1. 先批量更新 max_issue
-                $maxIssueUpdates = [];
-                foreach ($updates as $update) {
-                    $maxIssueUpdates[$update['keyword']] = $update['max_issue'];
-                }
-
-                $caseMaxIssue = $this->buildCaseStatement($maxIssueUpdates, 'max_issue');
+            foreach ($updateData as $data) {
                 DB::table('year_pics')
-                    ->where('year', $config['year'])
-                    ->where('color', $config['color'])
-                    ->where('lotteryType', $config['type'])
+                    ->where('year', $data['year'])
+                    ->where('color', $data['color'])
+                    ->where('keyword', $data['keyword'])
                     ->where('is_add', 0)
-                    ->update([
-                        'max_issue' => DB::raw($caseMaxIssue)
-                    ]);
-
-                // 2. 单独处理有 issues 变化的记录
-                $issueUpdates = array_filter($updates, fn($u) => isset($u['issues']));
-                if (!empty($issueUpdates)) {
-                    foreach ($issueUpdates as $update) {
-                        DB::table('year_pics')
-                            ->where('keyword', $update['keyword'])
-                            ->where('year', $config['year'])
-                            ->update(['issues' => $update['issues']]);
-                    }
-                }
-            });
-        } catch (\Exception $e) {
-            Log::error('批量更新失败: '.$e->getMessage(), ['updates' => $updates]);
-            throw $e;
-        }
-    }
-
-    private function buildCaseStatement(array $updates, string $field): string
-    {
-        $cases = [];
-        foreach ($updates as $keyword => $value) {
-            $cases[] = "WHEN keyword = '{$keyword}' THEN '{$value}'";
-        }
-        return "CASE " . implode(' ', $cases) . " ELSE {$field} END";
-    }
-
-    private function prepareBindings(array $updates): array
-    {
-        return array_reduce($updates, function ($carry, $item) {
-            if (isset($item['issues'])) {
-                $carry[] = $item['keyword'];
-                $carry[] = $item['issues'];
+                    ->where('lotteryType', $data['lotteryType'])
+                    ->where('pictureTypeId', $data['pictureTypeId'])
+                    ->where('max_issue', '<>', $data['max_issue'])
+                    ->update($data);
             }
-            return $carry;
-        }, []);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('批量更新失败：' . $e->getMessage());
+        }
     }
 
     /**
