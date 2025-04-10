@@ -165,10 +165,10 @@ class AutoXgAmMaxIssues extends Command
     {
         $update = [
             'max_issue' => $item['number'],
+            'keyword' => $item['keyword'],
             'year' => $year,
             'color' => $item['color'],
-            'keyword' => $item['keyword'],
-            'lotteryType' => $item['lotteryType'],
+            'lotteryType' => $item['type'],
             'pictureTypeId' => $item['pictureTypeId']
         ];
 
@@ -184,17 +184,32 @@ class AutoXgAmMaxIssues extends Command
     {
         try {
             DB::transaction(function () use ($updates, $config) {
-                $caseSql = $this->buildCaseStatement($updates);
+                // 1. 先批量更新 max_issue
+                $maxIssueUpdates = [];
+                foreach ($updates as $update) {
+                    $maxIssueUpdates[$update['keyword']] = $update['max_issue'];
+                }
 
+                $caseMaxIssue = $this->buildCaseStatement($maxIssueUpdates, 'max_issue');
                 DB::table('year_pics')
                     ->where('year', $config['year'])
                     ->where('color', $config['color'])
                     ->where('lotteryType', $config['type'])
                     ->where('is_add', 0)
                     ->update([
-                        'max_issue' => DB::raw("CASE {$caseSql} ELSE max_issue END"),
-                        'issues' => DB::raw("CASE WHEN keyword IN (".implode(',', array_fill(0, count($updates), '?')).") THEN ? ELSE issues END")
-                    ], $this->prepareBindings($updates));
+                        'max_issue' => DB::raw($caseMaxIssue)
+                    ]);
+
+                // 2. 单独处理有 issues 变化的记录
+                $issueUpdates = array_filter($updates, fn($u) => isset($u['issues']));
+                if (!empty($issueUpdates)) {
+                    foreach ($issueUpdates as $update) {
+                        DB::table('year_pics')
+                            ->where('keyword', $update['keyword'])
+                            ->where('year', $config['year'])
+                            ->update(['issues' => $update['issues']]);
+                    }
+                }
             });
         } catch (\Exception $e) {
             Log::error('批量更新失败: '.$e->getMessage(), ['updates' => $updates]);
@@ -202,23 +217,24 @@ class AutoXgAmMaxIssues extends Command
         }
     }
 
-    private function buildCaseStatement(array $updates): string
+    private function buildCaseStatement(array $updates, string $field): string
     {
         $cases = [];
-        foreach ($updates as $update) {
-            $cases[] = "WHEN keyword = '{$update['keyword']}' THEN '{$update['max_issue']}'";
+        foreach ($updates as $keyword => $value) {
+            $cases[] = "WHEN keyword = '{$keyword}' THEN '{$value}'";
         }
-        return implode(' ', $cases);
+        return "CASE " . implode(' ', $cases) . " ELSE {$field} END";
     }
 
     private function prepareBindings(array $updates): array
     {
-        $bindings = [];
-        foreach ($updates as $update) {
-            $bindings[] = $update['keyword'];
-            $bindings[] = $update['issues'];
-        }
-        return $bindings;
+        return array_reduce($updates, function ($carry, $item) {
+            if (isset($item['issues'])) {
+                $carry[] = $item['keyword'];
+                $carry[] = $item['issues'];
+            }
+            return $carry;
+        }, []);
     }
 
     /**
