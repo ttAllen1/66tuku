@@ -184,8 +184,8 @@ class PictureService extends BaseApiService
                 if ($list['pictureTypeId'] == "33344") {
                     if (is_array($urlPrefixArr)) {
                         foreach ($urlPrefixArr as $v) {
-                            $pic_lists['data'][$k]['pictureUrl'] = str_replace([$v . 'm/col/', $v . 'col/', $v . '/col/'], 'https://tu.tuku.fit/aomen/' . $list['pic_other']['year'] . '/', $pic_lists['data'][$k]['pictureUrl']);
-                            $pic_lists['data'][$k]['previousPictureUrl'] = str_replace([$v . 'm/col/', $v . 'col/', $v . '/col/'], 'https://tu.tuku.fit/aomen/' . $list['pic_other']['year'] . '/', $pic_lists['data'][$k]['previousPictureUrl']);
+                            $pic_lists['data'][$k]['pictureUrl'] = str_replace([$v . 'm/col/', $v . 'col/', $v . '/col/'], 'https://tu.tuku.fit/aomen/' . $list['pic_other']['year'] . '/col/', $pic_lists['data'][$k]['pictureUrl']);
+                            $pic_lists['data'][$k]['previousPictureUrl'] = str_replace([$v . 'm/col/', $v . 'col/', $v . '/col/'], 'https://tu.tuku.fit/aomen/' . $list['pic_other']['year'] . '/col/', $pic_lists['data'][$k]['previousPictureUrl']);
                         }
                     }
                 } else if ($list['pictureTypeId'] ==69310) {
