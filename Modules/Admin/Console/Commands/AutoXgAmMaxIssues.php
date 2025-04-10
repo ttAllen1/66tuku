@@ -97,6 +97,7 @@ class AutoXgAmMaxIssues extends Command
             ->where('year', $res['data']['year'])
             ->where('color', $config['color'])
             ->where('is_add', 0)
+            ->where('is_delete', 0)
             ->where('lotteryType', $config['type'])
             ->value('issues');
 
@@ -142,6 +143,7 @@ class AutoXgAmMaxIssues extends Command
                     ->where('color', $data['color'])
                     ->where('keyword', $data['keyword'])
                     ->where('is_add', 0)
+                    ->where('is_delete', 0)
                     ->where('lotteryType', $data['lotteryType'])
                     ->where('pictureTypeId', $data['pictureTypeId'])
                     ->where('max_issue', '<>', $data['max_issue'])
