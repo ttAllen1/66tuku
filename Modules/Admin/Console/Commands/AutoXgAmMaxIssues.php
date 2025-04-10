@@ -78,7 +78,7 @@ class AutoXgAmMaxIssues extends Command
             $this->info('所有配置处理完成');
         } catch (\Exception $e) {
             Log::error('命令执行异常: '.$e->getMessage(), ['trace' => $e->getTrace()]);
-            $this->error('处理失败: '.$e->getMessage(), $e->getLine());
+            $this->error('处理失败: '.$e->getMessage() ."line: " . $e->getLine());
         }
     }
 
