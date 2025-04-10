@@ -45,14 +45,12 @@ class AutoXgAmMaxIssues extends Command
 
     public function handle()
     {
-
         $h = date('H');
         $i = date('i');
         if ($h == 21 && $i <= 40) {
-            Log::info('当前时间为00:00，跳过处理');
+//            Log::info('当前时间为00:00，跳过处理');
             return;
         }
-
         foreach ($this->_pic_configs as $v) {
             // 开始进行数据抓取和处理
             $this->processData($v);
@@ -107,16 +105,21 @@ class AutoXgAmMaxIssues extends Command
             ->where('is_add', 0)
             ->where('is_delete', 0)
             ->where('lotteryType', $config['type'])
+            ->orderBy('max_issue')
             ->value('issues');
 
         if (!$issues) {
-            Log::info('没有找到相关记录，跳过处理');
+//            Log::info('没有找到相关记录，跳过处理');
             return;
         }
 
         $issues = json_decode($issues, true);
+        // 判断数组第一位是否是最新一期
+        if (isset($issues[0]) && $issues[0] == "第" . $list[0]['number'] . "期") {
+//            Log::info('当前数据已是最新一期，跳过处理');
+            return;
+        }
         array_unshift($issues, "第" . $list[0]['number'] . "期");
-
         // 更新数据库时，使用批量更新，避免每次循环都操作数据库
         $updateData = [];
         foreach ($list as $v) {
