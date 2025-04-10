@@ -168,7 +168,7 @@ class AutoXgAmMaxIssues extends Command
             'keyword' => $item['keyword'],
             'year' => $year,
             'color' => $item['color'],
-            'lotteryType' => $item['type'],
+            'lotteryType' => $item['lotteryType'],
             'pictureTypeId' => $item['pictureTypeId']
         ];
 
