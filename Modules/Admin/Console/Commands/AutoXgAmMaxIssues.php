@@ -15,7 +15,7 @@ class AutoXgAmMaxIssues extends Command
     // 配置项移至常量提升可维护性
     private const MAX_RETRIES = 3;
     private const RETRY_DELAY = 1000; // 毫秒
-    private const BATCH_UPDATE_SIZE = 100;
+    private const BATCH_UPDATE_SIZE = 2;
     protected $_pic_configs = [
         [
             'type'      => 1,
@@ -23,21 +23,24 @@ class AutoXgAmMaxIssues extends Command
             'year'      => 2025,
             'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=1",
         ],
-//        [
-//            'type'      => 1,
-//            'color'     => 2,
-//            'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=2",
-//        ],
-//        [
-//            'type'      => 2,
-//            'color'     => 1,
-//            'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=1",
-//        ],
-//        [
-//            'type'      => 2,
-//            'color'     => 2,
-//            'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=2",
-//        ]
+        [
+            'type'      => 1,
+            'color'     => 2,
+            'year'      => 2025,
+            'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=2",
+        ],
+        [
+            'type'      => 2,
+            'color'     => 1,
+            'year'      => 2025,
+            'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=1",
+        ],
+        [
+            'type'      => 2,
+            'color'     => 2,
+            'year'      => 2025,
+            'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=2",
+        ]
     ];
 
     /**
@@ -71,6 +74,12 @@ class AutoXgAmMaxIssues extends Command
      */
     public function handle()
     {
+        $h = date('H');
+        $i = date('i');
+        if ($h == 21 && $i < 40) {
+            $this->info('当前时间不允许执行');
+            return;
+        }
         try {
             foreach ($this->_pic_configs as $config) {
                 $this->processConfig($config);
@@ -154,6 +163,7 @@ class AutoXgAmMaxIssues extends Command
             ->where('year', $year)
             ->where('color', $config['color'])
             ->where('is_add', 0)
+            ->where('is_delete', 0)
             ->where('lotteryType', $config['type'])
             ->select('issues')
             ->first();
@@ -182,6 +192,7 @@ class AutoXgAmMaxIssues extends Command
 
     private function executeBatchUpdate(array $updates, array $config): void
     {
+        dd($updates, $config);
         try {
             DB::transaction(function () use ($updates, $config) {
                 // 1. 先批量更新 max_issue
