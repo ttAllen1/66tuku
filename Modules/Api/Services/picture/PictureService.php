@@ -231,31 +231,33 @@ class PictureService extends BaseApiService
             }
             unset($pic_lists['data'][$k]['pic_other']);
 
-            if ($list['lotteryType'] == 1) {
-                // 新增s3地址  https://amtk.tuku.fit
-                if (Str::startsWith($pic_lists['data'][$k]['pictureUrl'], ['https://amtk.tuku.fit', 'https://tu.tuku.fit', 'https://xg.tuku.fit', 'https://kk.tuku.fit', 'https://mm.tuku.fit', 'https://49tk.tuku.fit'])) {
-                    $pic_lists['data'][$k]['s3_pictureUrl'] = "https://lty-s1.s3.ap-east-1.amazonaws.com/49_tk/images/xg/{$previousIssue}/" . basename($pic_lists['data'][$k]['pictureUrl']);
-                    $previousIssue1 = $previousIssue - 1;
-                    $pic_lists['data'][$k]['s3_prefix_pictureUrl'] = "https://lty-s1.s3.ap-east-1.amazonaws.com/49_tk/images/xg/{$previousIssue1}/" . basename($pic_lists['data'][$k]['pictureUrl']);
-                } else {
-                    $pic_lists['data'][$k]['pictureUrl'] = $pic_lists['data'][$k]['s3_pictureUrl'] = "https://lty-s1.s3.ap-east-1.amazonaws.com/49_tk/images/xg/{$previousIssue}/" . basename($pic_lists['data'][$k]['pictureUrl']);
-                    $previousIssue1 = $previousIssue - 1;
-                    $pic_lists['data'][$k]['previousPictureUrl'] = $pic_lists['data'][$k]['s3_prefix_pictureUrl'] = "https://lty-s1.s3.ap-east-1.amazonaws.com/49_tk/images/xg/{$previousIssue1}/" . basename($pic_lists['data'][$k]['pictureUrl']);
-                }
-            }
-
-            if ($list['lotteryType'] == 2) {
-                // 新增s3地址  https://amtk.tuku.fit
-                if (Str::startsWith($pic_lists['data'][$k]['pictureUrl'], ['https://amtk.tuku.fit', 'https://tu.tuku.fit', 'https://49tk.tuku.fit'])) {
-                    $pic_lists['data'][$k]['s3_pictureUrl'] = "https://lty-s1.s3.ap-east-1.amazonaws.com/49_tk/images/{$previousIssue}/" . basename($pic_lists['data'][$k]['pictureUrl']);
-                    $previousIssue1 = $previousIssue - 1;
-                    $pic_lists['data'][$k]['s3_prefix_pictureUrl'] = "https://lty-s1.s3.ap-east-1.amazonaws.com/49_tk/images/{$previousIssue1}/" . basename($pic_lists['data'][$k]['pictureUrl']);
-                } else {
-                    $pic_lists['data'][$k]['pictureUrl'] = $pic_lists['data'][$k]['s3_pictureUrl'] = "https://lty-s1.s3.ap-east-1.amazonaws.com/49_tk/images/{$previousIssue}/" . basename($pic_lists['data'][$k]['pictureUrl']);
-                    $previousIssue1 = $previousIssue - 1;
-                    $pic_lists['data'][$k]['previousPictureUrl'] = $pic_lists['data'][$k]['s3_prefix_pictureUrl'] = "https://lty-s1.s3.ap-east-1.amazonaws.com/49_tk/images/{$previousIssue1}/" . basename($pic_lists['data'][$k]['pictureUrl']);
-                }
-            }
+            $pic_lists['data'][$k]['s3_pictureUrl'] = $pic_lists['data'][$k]['pictureUrl'];
+            $pic_lists['data'][$k]['s3_prefix_pictureUrl'] = $pic_lists['data'][$k]['previousPictureUrl'];
+//            if ($list['lotteryType'] == 1) {
+//                // 新增s3地址  https://amtk.tuku.fit
+//                if (Str::startsWith($pic_lists['data'][$k]['pictureUrl'], ['https://amtk.tuku.fit', 'https://tu.tuku.fit', 'https://xg.tuku.fit', 'https://kk.tuku.fit', 'https://mm.tuku.fit', 'https://49tk.tuku.fit'])) {
+//                    $pic_lists['data'][$k]['s3_pictureUrl'] = "https://lty-s1.s3.ap-east-1.amazonaws.com/49_tk/images/xg/{$previousIssue}/" . basename($pic_lists['data'][$k]['pictureUrl']);
+//                    $previousIssue1 = $previousIssue - 1;
+//                    $pic_lists['data'][$k]['s3_prefix_pictureUrl'] = "https://lty-s1.s3.ap-east-1.amazonaws.com/49_tk/images/xg/{$previousIssue1}/" . basename($pic_lists['data'][$k]['pictureUrl']);
+//                } else {
+//                    $pic_lists['data'][$k]['pictureUrl'] = $pic_lists['data'][$k]['s3_pictureUrl'] = "https://lty-s1.s3.ap-east-1.amazonaws.com/49_tk/images/xg/{$previousIssue}/" . basename($pic_lists['data'][$k]['pictureUrl']);
+//                    $previousIssue1 = $previousIssue - 1;
+//                    $pic_lists['data'][$k]['previousPictureUrl'] = $pic_lists['data'][$k]['s3_prefix_pictureUrl'] = "https://lty-s1.s3.ap-east-1.amazonaws.com/49_tk/images/xg/{$previousIssue1}/" . basename($pic_lists['data'][$k]['pictureUrl']);
+//                }
+//            }
+//
+//            if ($list['lotteryType'] == 2) {
+//                // 新增s3地址  https://amtk.tuku.fit
+//                if (Str::startsWith($pic_lists['data'][$k]['pictureUrl'], ['https://amtk.tuku.fit', 'https://tu.tuku.fit', 'https://49tk.tuku.fit'])) {
+//                    $pic_lists['data'][$k]['s3_pictureUrl'] = "https://lty-s1.s3.ap-east-1.amazonaws.com/49_tk/images/{$previousIssue}/" . basename($pic_lists['data'][$k]['pictureUrl']);
+//                    $previousIssue1 = $previousIssue - 1;
+//                    $pic_lists['data'][$k]['s3_prefix_pictureUrl'] = "https://lty-s1.s3.ap-east-1.amazonaws.com/49_tk/images/{$previousIssue1}/" . basename($pic_lists['data'][$k]['pictureUrl']);
+//                } else {
+//                    $pic_lists['data'][$k]['pictureUrl'] = $pic_lists['data'][$k]['s3_pictureUrl'] = "https://lty-s1.s3.ap-east-1.amazonaws.com/49_tk/images/{$previousIssue}/" . basename($pic_lists['data'][$k]['pictureUrl']);
+//                    $previousIssue1 = $previousIssue - 1;
+//                    $pic_lists['data'][$k]['previousPictureUrl'] = $pic_lists['data'][$k]['s3_prefix_pictureUrl'] = "https://lty-s1.s3.ap-east-1.amazonaws.com/49_tk/images/{$previousIssue1}/" . basename($pic_lists['data'][$k]['pictureUrl']);
+//                }
+//            }
         }
 //        if (auth('user')->id() == 75454) {
 //            dd($pic_lists['data'], $this->getImgPrefix()[2024][2]);
