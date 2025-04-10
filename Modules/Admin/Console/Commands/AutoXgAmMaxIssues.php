@@ -12,16 +12,16 @@ use Symfony\Component\Console\Input\InputOption;
 class AutoXgAmMaxIssues extends Command
 {
     protected $_pic_configs = [
-        [
-            'type'      => 1,
-            'color'     => 1,
-            'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=1",
-        ],
 //        [
 //            'type'      => 1,
-//            'color'     => 2,
-//            'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=2",
+//            'color'     => 1,
+//            'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=1",
 //        ],
+        [
+            'type'      => 1,
+            'color'     => 2,
+            'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=2",
+        ],
 //        [
 //            'type'      => 2,
 //            'color'     => 1,
