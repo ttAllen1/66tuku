@@ -304,6 +304,9 @@ class PictureService extends BaseApiService
                 $query->where('pictureName', 'like', '%' . $params['keyword'] . '%');
             })
             ->get()->toArray();
+        if (!$list) {
+            return $this->apiSuccess();
+        }
         $maxIssue = $list[0]['max_issue'];
         if ($maxIssue != Redis::get('lottery_real_open_issue_'.$params['lotteryType'])) {
             try {
