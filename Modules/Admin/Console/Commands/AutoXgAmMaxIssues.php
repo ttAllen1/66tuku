@@ -12,21 +12,21 @@ use Symfony\Component\Console\Input\InputOption;
 class AutoXgAmMaxIssues extends Command
 {
     protected $_pic_configs = [
-//        [
-//            'type'      => 1,
-//            'color'     => 1,
-//            'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=1",
-//        ],
-//        [
-//            'type'      => 1,
-//            'color'     => 2,
-//            'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=2",
-//        ],
-//        [
-//            'type'      => 2,
-//            'color'     => 1,
-//            'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=1",
-//        ],
+        [
+            'type'      => 1,
+            'color'     => 1,
+            'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=1",
+        ],
+        [
+            'type'      => 1,
+            'color'     => 2,
+            'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=2",
+        ],
+        [
+            'type'      => 2,
+            'color'     => 1,
+            'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=1",
+        ],
         [
             'type'      => 2,
             'color'     => 2,
@@ -45,6 +45,14 @@ class AutoXgAmMaxIssues extends Command
 
     public function handle()
     {
+
+        $h = date('H');
+        $i = date('i');
+        if ($h == 21 && $i <= 40) {
+            Log::info('当前时间为00:00，跳过处理');
+            return;
+        }
+
         foreach ($this->_pic_configs as $v) {
             // 开始进行数据抓取和处理
             $this->processData($v);
