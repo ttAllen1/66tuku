@@ -20,6 +20,7 @@ class AutoXgAmMaxIssues extends Command
         [
             'type'      => 1,
             'color'     => 1,
+            'year'      => 2025,
             'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=1",
         ],
 //        [
@@ -132,7 +133,7 @@ class AutoXgAmMaxIssues extends Command
         $updates = [];
 
         foreach ($items as $item) {
-            $updates[] = $this->prepareUpdateData($item, $existingIssue);
+            $updates[] = $this->prepareUpdateData($item,  $year, $existingIssue);
 
             // 批量更新
             if (count($updates) >= self::BATCH_UPDATE_SIZE) {
@@ -160,11 +161,11 @@ class AutoXgAmMaxIssues extends Command
         return $result ? json_decode($result->issues, true) : null;
     }
 
-    private function prepareUpdateData(array $item, ?array &$existingIssue): array
+    private function prepareUpdateData(array $item, int $year, ?array &$existingIssue): array
     {
         $update = [
             'max_issue' => $item['number'],
-            'year' => $item['year'],
+            'year' => $year,
             'color' => $item['color'],
             'keyword' => $item['keyword'],
             'lotteryType' => $item['type'],
