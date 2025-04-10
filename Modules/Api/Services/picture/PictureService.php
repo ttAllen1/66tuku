@@ -548,16 +548,16 @@ class PictureService extends BaseApiService
                 rsort($arr);
             }
             // 新澳 S3 图片替换 最新一期
-            if ( $obj['PicDetailData']['lotteryType'] == 1 && !Str::startsWith($obj['PicDetailData']['largePictureUrl'], ['https://amtk.tuku.fit', 'https://tu.tuku.fit', 'https://xg.tuku.fit', 'https://kk.tuku.fit', 'https://mm.tuku.fit', 'https://49tk.tuku.fit'])) {
-                if ($obj['PicDetailData']['issue'] == $obj['PicDetailData']['issues'][0]['issue']) {
-                    $obj['PicDetailData']['largePictureUrl'] = "https://lty-s1.s3.ap-east-1.amazonaws.com/49_tk/images/xg/{$obj['PicDetailData']['issue']}/" . $obj['PicDetailData']['keyword'] . ".jpg";
-                }
-            }
-            if ( $obj['PicDetailData']['lotteryType'] == 2 && !Str::startsWith($obj['PicDetailData']['largePictureUrl'], ['https://amtk.tuku.fit', 'https://tu.tuku.fit', 'https://49tk.tuku.fit'])) {
-                if ($obj['PicDetailData']['issue'] == $obj['PicDetailData']['issues'][0]['issue']) {
-                    $obj['PicDetailData']['largePictureUrl'] = "https://lty-s1.s3.ap-east-1.amazonaws.com/49_tk/images/{$obj['PicDetailData']['issue']}/" . $obj['PicDetailData']['keyword'] . ".jpg";
-                }
-            }
+//            if ( $obj['PicDetailData']['lotteryType'] == 1 && !Str::startsWith($obj['PicDetailData']['largePictureUrl'], ['https://amtk.tuku.fit', 'https://tu.tuku.fit', 'https://xg.tuku.fit', 'https://kk.tuku.fit', 'https://mm.tuku.fit', 'https://49tk.tuku.fit'])) {
+//                if ($obj['PicDetailData']['issue'] == $obj['PicDetailData']['issues'][0]['issue']) {
+//                    $obj['PicDetailData']['largePictureUrl'] = "https://lty-s1.s3.ap-east-1.amazonaws.com/49_tk/images/xg/{$obj['PicDetailData']['issue']}/" . $obj['PicDetailData']['keyword'] . ".jpg";
+//                }
+//            }
+//            if ( $obj['PicDetailData']['lotteryType'] == 2 && !Str::startsWith($obj['PicDetailData']['largePictureUrl'], ['https://amtk.tuku.fit', 'https://tu.tuku.fit', 'https://49tk.tuku.fit'])) {
+//                if ($obj['PicDetailData']['issue'] == $obj['PicDetailData']['issues'][0]['issue']) {
+//                    $obj['PicDetailData']['largePictureUrl'] = "https://lty-s1.s3.ap-east-1.amazonaws.com/49_tk/images/{$obj['PicDetailData']['issue']}/" . $obj['PicDetailData']['keyword'] . ".jpg";
+//                }
+//            }
             $obj['PicDetailData']['issues'] = $arr;
             if (isset($params['ts'])) {
                 dd($obj);
