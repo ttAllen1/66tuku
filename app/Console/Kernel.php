@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Bus;
 use Modules\Admin\Console\Commands\AmIndexPic;
 use Modules\Admin\Console\Commands\AmYearPic;
 use Modules\Admin\Console\Commands\AutoVote;
+use Modules\Admin\Console\Commands\AutoXgAmMaxIssues;
 use Modules\Admin\Console\Commands\CacheIndexPic;
 use Modules\Admin\Console\Commands\CheckTransfer;
 use Modules\Admin\Console\Commands\ClearCorpusDomain;
@@ -135,7 +136,8 @@ class Kernel extends ConsoleKernel
         MemberLimit::class,
         GenGamePeriods::class,
         XgAI::class,
-        IndexGuess::class
+        IndexGuess::class,
+        AutoXgAmMaxIssues::class
     ];
 
     /**
