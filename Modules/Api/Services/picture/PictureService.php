@@ -200,8 +200,8 @@ class PictureService extends BaseApiService
                     if (is_array($urlPrefixArr)) {
                         foreach ($urlPrefixArr as $v) {
                             if (in_array($list['pictureTypeId'], $this->_am_pictureIds)) { // https://am.tuku.fit/galleryfiles/system/m/col/2024/128/ammh.jpg
-                                $pic_lists['data'][$k]['pictureUrl'] = str_replace([$v . 'm/col/', $v . 'col/', $v . '/col/'], 'https://amtk.tuku.fit/galleryfiles/system/big-pic/col/' . $pic_lists['data'][$k]['year'] . '/', $pic_lists['data'][$k]['pictureUrl']);
-                                $pic_lists['data'][$k]['previousPictureUrl'] = str_replace([$v . 'm/col/', $v . 'col/', $v . '/col/'], 'https://amtk.tuku.fit/galleryfiles/system/big-pic/col/' . $pic_lists['data'][$k]['year'] . '/', $pic_lists['data'][$k]['previousPictureUrl']);
+                                $pic_lists['data'][$k]['pictureUrl'] = str_replace([$v . 'm/col/', $v . 'col/', $v . '/col/'], 'https://amtk.tuku.fit/galleryfiles/system/m/col/' . $pic_lists['data'][$k]['year'] . '/', $pic_lists['data'][$k]['pictureUrl']);
+                                $pic_lists['data'][$k]['previousPictureUrl'] = str_replace([$v . 'm/col/', $v . 'col/', $v . '/col/'], 'https://amtk.tuku.fit/galleryfiles/system/m/col/' . $pic_lists['data'][$k]['year'] . '/', $pic_lists['data'][$k]['previousPictureUrl']);
                             } else if (in_array($list['pictureTypeId'], $this->_kl8_pictureIds)) {
                                 $pic_lists['data'][$k]['pictureUrl'] = str_replace($v . 'col/', 'https://am.tuku.fit/galleryfiles/system/m/col/', $pic_lists['data'][$k]['pictureUrl']);
                                 $pic_lists['data'][$k]['previousPictureUrl'] = str_replace($v . 'col/', 'https://am.tuku.fit/galleryfiles/system/m/col/', $pic_lists['data'][$k]['previousPictureUrl']);
