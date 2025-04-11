@@ -55,6 +55,7 @@ use Modules\Admin\Console\Commands\Spider;
 use Modules\Admin\Console\Commands\SpiderComments;
 use Modules\Admin\Console\Commands\SpiderNumbers;
 use Modules\Admin\Console\Commands\SpiderNumbersByAC;
+use Modules\Admin\Console\Commands\SpiderXgBlackImg;
 use Modules\Admin\Console\Commands\SyncUserWithdraw;
 use Modules\Admin\Console\Commands\TgSend;
 use Modules\Admin\Console\Commands\TongbuDb;
@@ -137,7 +138,8 @@ class Kernel extends ConsoleKernel
         GenGamePeriods::class,
         XgAI::class,
         IndexGuess::class,
-        AutoXgAmMaxIssues::class
+        AutoXgAmMaxIssues::class,
+        SpiderXgBlackImg::class
     ];
 
     /**
