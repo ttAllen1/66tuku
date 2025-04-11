@@ -1033,8 +1033,18 @@ class PictureService extends BaseApiService
             $pic_lists['data'][$k]['is_ad'] = false;
             $pic_lists['data'][$k]['year'] = $list['pic_other']['year'];
             $pic_lists['data'][$k]['pictureId'] = $list['pic_other']['year'] . str_pad($list['pic_other']['max_issue'], 3, 0, STR_PAD_LEFT) . $list['pictureTypeId'];
-            $pic_lists['data'][$k]['pictureUrl'] = $this->getPicUrl($list['color'], $list['pic_other']['max_issue'], $list['pic_other']['keyword'], $list['lotteryType']);
-            $pic_lists['data'][$k]['previousPictureUrl'] = $this->getPicUrl($list['color'], $previous[$list['lotteryType']] - 1, $list['pic_other']['keyword'], $list['lotteryType']);
+//            $pic_lists['data'][$k]['pictureUrl'] = $this->getPicUrl($list['color'], $list['pic_other']['max_issue'], $list['pic_other']['keyword'], $list['lotteryType']);
+//            $pic_lists['data'][$k]['previousPictureUrl'] = $this->getPicUrl($list['color'], $previous[$list['lotteryType']] - 1, $list['pic_other']['keyword'], $list['lotteryType']);
+            $pic_lists['data'][$k]['pictureUrl'] = str_replace('big-pic', 'm', $this->getPicUrl($list['color'], $list['pic_other']['max_issue'], $list['pic_other']['keyword'], $list['lotteryType']));
+            if ( ($list['lotteryType'] == 2 || $list['lotteryType'] == 1) && Str::startsWith($pic_lists['data'][$k]['pictureUrl'], 'https://tk2.tuku.fit')) {
+                $pic_lists['data'][$k]['pictureUrl'] = Str::replace('/m/', '/', $pic_lists['data'][$k]['pictureUrl']);
+            }
+
+            $pic_lists['data'][$k]['previousPictureUrl'] = $this->getPicUrl($list['color'], $previous[$list['lotteryType']] - 1, $list['pic_other']['keyword'], $list['lotteryType']); // , 'jpg', $params['lotteryType']==3?2024:2023
+            if ( ($list['lotteryType'] == 2 || $list['lotteryType'] == 1) && Str::startsWith($pic_lists['data'][$k]['previousPictureUrl'], 'https://tk2.tuku.fit')) {
+                $pic_lists['data'][$k]['previousPictureUrl'] = Str::replace('/m/', '/', $pic_lists['data'][$k]['previousPictureUrl']);
+            }
+
             $pic_lists['data'][$k]['pictureUrlOther'] = '';
             $pic_lists['data'][$k]['previousPictureUrlOther'] = '';
             if ($list['lotteryType'] == 2) {
