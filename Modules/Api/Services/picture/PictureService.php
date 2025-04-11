@@ -105,7 +105,7 @@ class PictureService extends BaseApiService
             $indexImages = json_decode($indexImagesRdx, true);
             return $this->apiSuccess(ApiMsgData::GET_API_SUCCESS, $indexImages);
         }
-        $color = $params['color'] ?? 0;
+        $color = $params['color'] ?? 1;
         $pic_lists = IndexPic::query()
             ->where('is_delete', 0)
             ->where('lotteryType', $params['lotteryType'])
@@ -570,6 +570,18 @@ class PictureService extends BaseApiService
 //                }
 //            }
             $obj['PicDetailData']['issues'] = $arr;
+
+            // 处理黑白
+            if (Str::startsWith($obj['PicDetailData']['largePictureUrl'], ['https://tk2.tuku.fit']) && Str::contains($obj['PicDetailData']['largePictureUrl'], 'black')) {
+                $arr = explode('black', $obj['PicDetailData']['largePictureUrl']);
+                if ($obj['PicDetailData']['lotteryType'] == 2) {
+                    $obj['PicDetailData']['largePictureUrl'] = "https://amtk.tuku.fit/galleryfiles/system/big-pic/black/" . $obj['PicDetailData']['year'] . $arr[1];
+                } elseif ($obj['PicDetailData']['lotteryType'] == 1) {
+                    $obj['PicDetailData']['largePictureUrl'] = "https://xg.tuku.fit/galleryfiles/system/big-pic/black/" . $obj['PicDetailData']['year'] . $arr[1];
+                }
+
+            }
+
             if (isset($params['ts'])) {
                 dd($obj);
             }
