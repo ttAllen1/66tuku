@@ -828,8 +828,18 @@ class PictureService extends BaseApiService
         if (!$recommends->isEmpty()) {
             foreach ($recommends as $k => $recommend) {
                 $recommends[$k]['pictureId'] = $recommend['year'] . str_pad($recommend['max_issue'], 3, 0, STR_PAD_LEFT) . $recommend['pictureTypeId'];
-                $recommends[$k]['largePictureUrl'] = $this->getPicUrl($recommend['color'], $recommend['max_issue'], $recommend['keyword'], $recommend['lotteryType'], 'jpg', $year);
-                $recommends[$k]['previousPictureUrl'] = $this->getPicUrl($recommend['color'], $previousIssue, $recommend['keyword'], $recommend['lotteryType']);
+//                $recommends[$k]['largePictureUrl'] = $this->getPicUrl($recommend['color'], $recommend['max_issue'], $recommend['keyword'], $recommend['lotteryType'], 'jpg', $year);
+//                $recommends[$k]['previousPictureUrl'] = $this->getPicUrl($recommend['color'], $previousIssue, $recommend['keyword'], $recommend['lotteryType']);
+
+                $recommends[$k]['largePictureUrl'] = str_replace('big-pic', 'm', $this->getPicUrl($recommend['color'], $recommend['max_issue'], $recommend['keyword'], $recommend['lotteryType'], 'jpg', $year));
+                if ( ($lotteryType == 2 || $lotteryType == 1) && Str::startsWith($recommends[$k]['largePictureUrl'], 'https://tk2.tuku.fit')) {
+                    $recommends[$k]['largePictureUrl'] = Str::replace('/m/', '/', $recommends[$k]['largePictureUrl']);
+                }
+                $recommends[$k]['previousPictureUrl'] = str_replace('big-pic', 'm', $this->getPicUrl($recommend['color'], $previousIssue, $recommend['keyword'], $recommend['lotteryType'], 'jpg', $year));
+                if ( ($lotteryType == 2 || $lotteryType == 1) && Str::startsWith($recommends[$k]['largePictureUrl'], 'https://tk2.tuku.fit')) {
+                    $recommends[$k]['previousPictureUrl'] = Str::replace('/m/', '/', $recommends[$k]['previousPictureUrl']);
+                }
+
                 $recommends[$k]['largePictureUrlOther'] = '';
                 $recommends[$k]['previousPictureUrlOther'] = '';
                 if ($recommend['lotteryType'] == 5) {
