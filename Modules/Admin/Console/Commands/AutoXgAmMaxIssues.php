@@ -98,44 +98,51 @@ class AutoXgAmMaxIssues extends Command
 
         $list = $res['data']['list'];
 
-        // 获取对应的year_pics的当前`issues`数据
-        $issues = DB::table('year_pics')
-            ->where('year', $res['data']['year'])
-            ->where('color', $config['color'])
-            ->where('is_add', 0)
-            ->where('is_delete', 0)
-            ->where('lotteryType', $config['type'])
-            ->orderBy('max_issue')
-            ->value('issues');
+        foreach ($list as $k => $item) {
+//            if ($item['keyword'] == 'ammh' && $item['color'] == 1 && $item['lotteryType']==2) {
+//                 dd($item);
+//            }
+            $issues = DB::table('year_pics')
+                ->where('year', $res['data']['year'])
+                ->where('color', $item['color'])
+                ->where('keyword', $item['keyword'])
+                ->where('is_add', 0)
+                ->where('is_delete', 0)
+                ->where('lotteryType', $config['type'])
+                ->where('max_issue', '<>', $item['number'])
+                ->value('issues');
+            if ($issues) {
+                $issues = json_decode($issues, true);
+                if ($issues[0] == "第" . $item['number'] . "期") {
+                    DB::table('year_pics')
+                        ->where('year', $res['data']['year'])
+                        ->where('color', $item['color'])
+                        ->where('keyword', $item['keyword'])
+                        ->where('is_add', 0)
+                        ->where('is_delete', 0)
+                        ->where('lotteryType', $config['type'])
+                        ->where('max_issue', '<>', $item['number'])
+                        ->update([
+                            'max_issue'        => $item['number'],
+                        ]);
+                } else {
+                    array_unshift($issues, "第" . $item['number'] . "期");
+                    DB::table('year_pics')
+                        ->where('year', $res['data']['year'])
+                        ->where('color', $item['color'])
+                        ->where('keyword', $item['keyword'])
+                        ->where('is_add', 0)
+                        ->where('is_delete', 0)
+                        ->where('lotteryType', $config['type'])
+                        ->where('max_issue', '<>', $item['number'])
+                        ->update([
+                            'max_issue'        => $item['number'],
+                            'issues'            => json_encode($issues),
+                        ]);
+                }
 
-        if (!$issues) {
-//            Log::info('没有找到相关记录，跳过处理');
-            return;
+            }
         }
-
-        $issues = json_decode($issues, true);
-        // 判断数组第一位是否是最新一期
-        if (isset($issues[0]) && $issues[0] == "第" . $list[0]['number'] . "期") {
-//            Log::info('当前数据已是最新一期，跳过处理');
-            return;
-        }
-        array_unshift($issues, "第" . $list[0]['number'] . "期");
-        // 更新数据库时，使用批量更新，避免每次循环都操作数据库
-        $updateData = [];
-        foreach ($list as $v) {
-            $updateData[] = [
-                'year'             => $res['data']['year'],
-                'color'            => $v['color'],
-                'keyword'          => $v['keyword'],
-                'lotteryType'      => $config['type'],
-                'pictureTypeId'    => $v['pictureTypeId'],
-                'max_issue'        => $v['number'],
-                'issues'           => json_encode($issues),
-            ];
-        }
-
-        // 批量更新操作
-        $this->batchUpdate($updateData);
     }
 
     /**
