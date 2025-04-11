@@ -584,7 +584,6 @@ class PictureService extends BaseApiService
                 } elseif ($obj['PicDetailData']['lotteryType'] == 1) {
                     $obj['PicDetailData']['largePictureUrl'] = "https://xg.tuku.fit/galleryfiles/system/big-pic/black/" . $obj['PicDetailData']['year'] . $arr[1];
                 }
-
             }
 
             if (isset($params['ts'])) {

@@ -24,6 +24,7 @@ class SpiderXgBlackImg extends Command
 
     public function handle()
     {
+        return ;
         try{
             DB::beginTransaction();
             //         lot_year_pics  year = 2025 and lotteryType = 1 and color = 2 => color = 3
