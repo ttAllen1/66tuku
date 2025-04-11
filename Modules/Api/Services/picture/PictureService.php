@@ -105,7 +105,7 @@ class PictureService extends BaseApiService
             $indexImages = json_decode($indexImagesRdx, true);
             return $this->apiSuccess(ApiMsgData::GET_API_SUCCESS, $indexImages);
         }
-        $color = $params['color'] ?? 1;
+        $color =  1;
         $pic_lists = IndexPic::query()
             ->where('is_delete', 0)
             ->where('lotteryType', $params['lotteryType'])
