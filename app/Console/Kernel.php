@@ -185,7 +185,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('module:xg-ai')->everyFiveMinutes()->withoutOverlapping()->runInBackground();
 
-        $schedule->command('module:auto-xg-am-max-issue')->everyTenMinutes()->withoutOverlapping()->runInBackground();
+//        $schedule->command('module:auto-xg-am-max-issue')->everyTenMinutes()->withoutOverlapping()->runInBackground();
     }
 
     /**

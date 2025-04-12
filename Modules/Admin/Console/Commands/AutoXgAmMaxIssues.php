@@ -17,11 +17,11 @@ class AutoXgAmMaxIssues extends Command
             'color'     => 1,
             'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=1",
         ],
-        [
-            'type'      => 1,
-            'color'     => 2,
-            'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=2",
-        ],
+        //        [
+        //            'type'      => 1,
+        //            'color'     => 2,
+        //            'url'       => "https://49208.com/unite49/h5/index/search?year=2025&keyword=&color=2",
+        //        ],
         [
             'type'      => 2,
             'color'     => 1,
@@ -45,6 +45,8 @@ class AutoXgAmMaxIssues extends Command
 
     public function handle()
     {
+//        Log::error(date("Y-m-d H:i:s") . '开始执行命令【module:auto-xg-am-max-issue】' );
+//        return ;
         $h = date('H');
         $i = date('i');
         if ($h == 21 && $i <= 40) {
@@ -98,50 +100,58 @@ class AutoXgAmMaxIssues extends Command
 
         $list = $res['data']['list'];
 
-        foreach ($list as $k => $item) {
-//            if ($item['keyword'] == 'ammh' && $item['color'] == 1 && $item['lotteryType']==2) {
-//                 dd($item);
-//            }
-            $issues = DB::table('year_pics')
-                ->where('year', $res['data']['year'])
-                ->where('color', $item['color'])
-                ->where('keyword', $item['keyword'])
-                ->where('is_add', 0)
-                ->where('is_delete', 0)
-                ->where('lotteryType', $config['type'])
-                ->where('max_issue', '<>', $item['number'])
-                ->value('issues');
-            if ($issues) {
-                $issues = json_decode($issues, true);
-                if ($issues[0] == "第" . $item['number'] . "期") {
-                    DB::table('year_pics')
-                        ->where('year', $res['data']['year'])
-                        ->where('color', $item['color'])
-                        ->where('keyword', $item['keyword'])
-                        ->where('is_add', 0)
-                        ->where('is_delete', 0)
-                        ->where('lotteryType', $config['type'])
-                        ->where('max_issue', '<>', $item['number'])
-                        ->update([
-                            'max_issue'        => $item['number'],
-                        ]);
-                } else {
-                    array_unshift($issues, "第" . $item['number'] . "期");
-                    DB::table('year_pics')
-                        ->where('year', $res['data']['year'])
-                        ->where('color', $item['color'])
-                        ->where('keyword', $item['keyword'])
-                        ->where('is_add', 0)
-                        ->where('is_delete', 0)
-                        ->where('lotteryType', $config['type'])
-                        ->where('max_issue', '<>', $item['number'])
-                        ->update([
-                            'max_issue'        => $item['number'],
-                            'issues'            => json_encode($issues),
-                        ]);
-                }
+        DB::beginTransaction();
+        try{
+            foreach ($list as $k => $item) {
+                $issues = DB::table('year_pics')
+                    ->lockForUpdate()
+                    ->where('year', $res['data']['year'])
+                    ->where('color', $item['color'])
+                    ->where('keyword', $item['keyword'])
+                    ->where('is_add', 0)
+                    ->where('is_delete', 0)
+                    ->where('lotteryType', $config['type'])
+                    ->where('max_issue', '<>', $item['number'])
+                    ->value('issues');
+                if ($issues) {
+                    $issues = json_decode($issues, true);
+                    if ($issues[0] == "第" . $item['number'] . "期") {
+                        DB::table('year_pics')
+                            ->lockForUpdate()
+                            ->where('year', $res['data']['year'])
+                            ->where('color', $item['color'])
+                            ->where('keyword', $item['keyword'])
+                            ->where('is_add', 0)
+                            ->where('is_delete', 0)
+                            ->where('lotteryType', $config['type'])
+                            ->where('max_issue', '<>', $item['number'])
+                            ->update([
+                                'max_issue'        => $item['number'],
+                            ]);
+                    } else {
+                        array_unshift($issues, "第" . $item['number'] . "期");
+                        DB::table('year_pics')
+                            ->lockForUpdate()
+                            ->where('year', $res['data']['year'])
+                            ->where('color', $item['color'])
+                            ->where('keyword', $item['keyword'])
+                            ->where('is_add', 0)
+                            ->where('is_delete', 0)
+                            ->where('lotteryType', $config['type'])
+                            ->where('max_issue', '<>', $item['number'])
+                            ->update([
+                                'max_issue'        => $item['number'],
+                                'issues'            => json_encode($issues),
+                            ]);
+                    }
 
+                }
             }
+            DB::commit();
+        }catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('命令【module:am-index-pic】数据格式错误或为空');
+            return;
         }
     }
 
