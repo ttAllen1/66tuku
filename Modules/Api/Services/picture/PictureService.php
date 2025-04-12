@@ -162,6 +162,11 @@ class PictureService extends BaseApiService
             $pic_lists['data'][$k]['pictureUrl'] = str_replace('big-pic', 'm', $this->getPicUrl($list['color'], $list['pic_other']['max_issue'], $list['pic_other']['keyword'], $list['lotteryType']));
             if ( ($list['lotteryType'] == 2 || $list['lotteryType'] == 1) && Str::startsWith($pic_lists['data'][$k]['pictureUrl'], 'https://tk2.tuku.fit')) {
                 $pic_lists['data'][$k]['pictureUrl'] = Str::replace('/m/', '/', $pic_lists['data'][$k]['pictureUrl']);
+                // 处理黑白
+                if (Str::contains($pic_lists['data'][$k]['pictureUrl'], 'black')) {
+                    $arr = explode('black', $pic_lists['data'][$k]['pictureUrl']);
+                    $pic_lists['data'][$k]['pictureUrl'] = "https://amtk.tuku.fit/galleryfiles/system/big-pic/black/" . date('Y') . $arr[1];
+                }
             }
 //            $pic_lists['data'][$k]['pictureUrl'] = str_replace('big-pic', 'm', $this->getPicUrl($list['color'], $list['pic_other']['max_issue'], $list['pic_other']['keyword'], $list['lotteryType'])); // , 'jpg', $params['lotteryType']==3?2024:2023
 //            if ($params['lotteryType'] == 1) {
@@ -178,6 +183,11 @@ class PictureService extends BaseApiService
             $pic_lists['data'][$k]['previousPictureUrl'] = $this->getPicUrl($list['color'], $previousIssue - 1, $list['pic_other']['keyword'], $list['lotteryType']); // , 'jpg', $params['lotteryType']==3?2024:2023
             if ( ($list['lotteryType'] == 2 || $list['lotteryType'] == 1) && Str::startsWith($pic_lists['data'][$k]['previousPictureUrl'], 'https://tk2.tuku.fit')) {
                 $pic_lists['data'][$k]['previousPictureUrl'] = Str::replace('/m/', '/', $pic_lists['data'][$k]['previousPictureUrl']);
+                // 处理黑白
+                if (Str::contains($pic_lists['data'][$k]['previousPictureUrl'], 'black')) {
+                    $arr = explode('black', $pic_lists['data'][$k]['previousPictureUrl']);
+                    $pic_lists['data'][$k]['previousPictureUrl'] = "https://amtk.tuku.fit/galleryfiles/system/big-pic/black/" . date('Y') . '/'. $arr[1];
+                }
             }
 //            $pic_lists['data'][$k]['previousPictureUrl'] = $this->getPicUrl($list['color'], $previousIssue - 1, $list['pic_other']['keyword'], $list['lotteryType']); // , 'jpg', $params['lotteryType']==3?2024:2023
             $pic_lists['data'][$k]['pictureUrlOther'] = '';
