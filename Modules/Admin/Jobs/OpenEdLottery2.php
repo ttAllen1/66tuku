@@ -48,7 +48,7 @@ class OpenEdLottery2 implements ShouldQueue
     public function update_year_issue()
     {
         // 更新最新一期期号
-        foreach ([1, 2, 3, 4, 5, 6, 7] as $v) {
+        foreach ([3, 4, 5, 6, 7] as $v) {
             try{
                 if (!Redis::get('lottery_real_open_over_'.$v.'_with_'.date('Y-m-d'))) {
                     continue;
