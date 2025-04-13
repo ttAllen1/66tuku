@@ -356,10 +356,10 @@ class HistoryService extends BaseApiService
             $arr = $this->getLotteryNumByRedis($lotteryType);
             $res = YearPic::query()
                 ->when($lotteryType==2, function($query) {
-                    $query->where('is_add', '<>', 0);
+                    $query->where('is_add', '<>', 0)->where('color', 2);
                 })
                 ->when($lotteryType==1, function($query) {
-                    $query->where('color', 2);
+                    $query->where('color', 2)->where('is_add', '<>', 0);
                 })
                 ->where('year', $year)->where('lotteryType', $lotteryType)->select(['max_issue', 'issues']);
             $firstModel = $res->firstOrFail();
