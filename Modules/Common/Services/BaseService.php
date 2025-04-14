@@ -1317,7 +1317,7 @@ class BaseService
     protected function attachImage(string $imageUrl, Model $model, bool $water = false)
     {
         $images = [];
-        $imageUrl = str_replace($this->getHttp(), '', $imageUrl);
+        $imageUrl = str_replace([$this->getHttp(), config('config.full_srv_img_prefix')], '', $imageUrl);
         $imageUrl = ltrim($imageUrl, '/');
         $imageUrl = [$imageUrl];
         foreach ($imageUrl as $k => $v) {
