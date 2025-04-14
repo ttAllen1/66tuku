@@ -46,8 +46,8 @@ class ImageService extends BaseApiService
                             [
                                 'image_id'  => 0,
                                 'type'      => $type,
-                                'url'       => $location == 'video' ? ($this->getHttp().'/upload/video_upload_ok.png') : $this->getHttp().'/'.$url,
-                                'video'     => $location == 'video' ? ($this->getHttp().'/'.$url) : '',
+                                'url'       => $location == 'video' ? (config('config.full_srv_img_prefix').'/upload/video_upload_ok.png') : config('config.full_srv_img_prefix').'/'.$url,
+                                'video'     => $location == 'video' ? (config('config.full_srv_img_prefix').$url) : '',
                                 'upload'    => $url
                             ]);
                     } else {
@@ -62,7 +62,7 @@ class ImageService extends BaseApiService
                                 [
                                     'image_id'  => $image_id,
                                     'type'      => $type,
-                                    'url'       => $this->getHttp().'/'.$url,
+                                    'url'       => config('config.full_srv_img_prefix').$url,
                                     'upload'    => $url
                                 ]);
                         }
