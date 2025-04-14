@@ -347,9 +347,9 @@ class HistoryService extends BaseApiService
      */
     public function update_year_issue($lotteryType)
     {
-        if ($lotteryType == 2) {
-            return ;
-        }
+//        if ($lotteryType == 2) {
+//            return ;
+//        }
         try{
             $year = date('Y');
             // 更新最新一期期号
@@ -359,7 +359,7 @@ class HistoryService extends BaseApiService
             $arr = $this->getLotteryNumByRedis($lotteryType);
             $res = YearPic::query()
                 ->when($lotteryType==2, function($query) {
-                    $query->where('is_add', '<>', 0)->where('color', 2);
+                    $query->where('is_add', '<>', 0);
                 })
                 ->when($lotteryType==1, function($query) {
                     $query->where('color', 2);
