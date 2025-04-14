@@ -45,8 +45,6 @@ class AutoXgAmMaxIssues extends Command
 
     public function handle()
     {
-//        Log::error(date("Y-m-d H:i:s") . '开始执行命令【module:auto-xg-am-max-issue】' );
-//        return ;
         $h = date('H');
         $i = date('i');
         if ($h == 21 && $i <= 40) {
@@ -66,29 +64,13 @@ class AutoXgAmMaxIssues extends Command
      */
     public function processData($config)
     {
-        // 重试机制，避免请求失败
-        $response = null;
-        $retryCount = 3;
-        while ($retryCount > 0) {
-            $response = Http::withHeaders([
-                'LotteryType' => $config['type'],
-                'User-Agent'  => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
-            ])->withOptions([
-                'verify' => false
-            ])->get($config['url']);
-
-            if ($response->status() == 200) {
-                break;
-            } else {
-                Log::error('请求失败，状态码：' . $response->status());
-                $retryCount--;
-                if ($retryCount == 0) {
-                    Log::error('请求失败，重试次数已达上限');
-                    return;
-                }
-                sleep(1); // 小延迟再重试
-            }
-        }
+        $response = Http::withHeaders([
+            'LotteryType' => $config['type'],
+            'Connection' => 'close', // 关键头
+            'User-Agent'  => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+        ])->withOptions([
+            'verify' => false,
+        ])->get($config['url']);
 
         $res = json_decode($response->body(), true);
 
@@ -99,60 +81,70 @@ class AutoXgAmMaxIssues extends Command
         }
 
         $list = $res['data']['list'];
-
+//        dd($list);
         DB::beginTransaction();
         try{
             foreach ($list as $k => $item) {
-                $issues = DB::table('year_pics')
-                    ->lockForUpdate()
+                $info = (array)DB::table('year_pics')
                     ->where('year', $res['data']['year'])
                     ->where('color', $item['color'])
                     ->where('keyword', $item['keyword'])
                     ->where('is_add', 0)
                     ->where('is_delete', 0)
                     ->where('lotteryType', $config['type'])
-                    ->where('max_issue', '<>', $item['number'])
-                    ->value('issues');
+                    ->where('max_issue', $item['number']-1)
+                    ->select(['issues', 'id'])->first();
+//                dd($item, (array)$info);
+                if (empty($info)) {
+                    echo ($config['type'] == 1 ? '港彩' : '澳彩') . $item['keyword'] . "第" . $item['number'] . "期不存在\n";
+                    continue;
+                }
+                $issues  = $info['issues'];
                 if ($issues) {
                     $issues = json_decode($issues, true);
+                    $issues = array_unique($issues);
                     if ($issues[0] == "第" . $item['number'] . "期") {
                         DB::table('year_pics')
-                            ->lockForUpdate()
-                            ->where('year', $res['data']['year'])
-                            ->where('color', $item['color'])
-                            ->where('keyword', $item['keyword'])
-                            ->where('is_add', 0)
-                            ->where('is_delete', 0)
-                            ->where('lotteryType', $config['type'])
-                            ->where('max_issue', '<>', $item['number'])
+                            ->where('id', $info['id'])
+//                            ->where('year', $res['data']['year'])
+//                            ->where('color', $item['color'])
+//                            ->where('keyword', $item['keyword'])
+//                            ->where('is_add', 0)
+//                            ->where('is_delete', 0)
+//                            ->where('lotteryType', $config['type'])
+//                            ->where('max_issue', '<>', $item['number'])
                             ->update([
                                 'max_issue'        => $item['number'],
                             ]);
+                        echo ($config['type'] == 1 ? '港彩' : '澳彩') . $item['keyword'] . "第" . $item['number'] . "期已存在，跳过更新\n";
                     } else {
-                        array_unshift($issues, "第" . $item['number'] . "期");
-                        DB::table('year_pics')
-                            ->lockForUpdate()
-                            ->where('year', $res['data']['year'])
-                            ->where('color', $item['color'])
-                            ->where('keyword', $item['keyword'])
-                            ->where('is_add', 0)
-                            ->where('is_delete', 0)
-                            ->where('lotteryType', $config['type'])
-                            ->where('max_issue', '<>', $item['number'])
-                            ->update([
-                                'max_issue'        => $item['number'],
-                                'issues'            => json_encode($issues),
-                            ]);
+                        if ($item['number'] == $issues[0] + 1) { // 元旦前要修改
+                            array_unshift($issues, "第" . $item['number'] . "期");
+                            DB::table('year_pics')
+                                ->where('id', $info['id'])
+//                            ->where('year', $res['data']['year'])
+//                            ->where('color', $item['color'])
+//                            ->where('keyword', $item['keyword'])
+//                            ->where('is_add', 0)
+//                            ->where('is_delete', 0)
+//                            ->where('lotteryType', $config['type'])
+//                            ->where('max_issue', '<>', $item['number'])
+                                ->update([
+                                    'max_issue'        => $item['number'],
+                                    'issues'            => json_encode($issues),
+                                ]);
+                            echo ($config['type'] == 1 ? '港彩' : '澳彩') . $item['keyword'] . "第" . $item['number'] . "期已存在，更新数据\n";
+                        } else {
+                            Log::error('命令【module:auto-xg-am-max-issue】'. ($config['type'] == 1 ? '港彩' : '澳彩') . ' 期数不连续 keyword: ' . $item['keyword'] );
+                        }
                     }
-
                 }
             }
-            DB::commit();
         }catch (\Exception $e) {
             DB::rollBack();
-            Log::error('命令【module:am-index-pic】数据格式错误或为空');
-            return;
+            Log::error('命令【module:auto-xg-am-max-issue】更新失败：' . $e->getMessage());
         }
+        DB::commit();
     }
 
     /**
