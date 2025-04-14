@@ -347,6 +347,9 @@ class HistoryService extends BaseApiService
      */
     public function update_year_issue($lotteryType)
     {
+        if ($lotteryType == 2) {
+            return ;
+        }
         try{
             $year = date('Y');
             // 更新最新一期期号
@@ -359,7 +362,7 @@ class HistoryService extends BaseApiService
                     $query->where('is_add', '<>', 0)->where('color', 2);
                 })
                 ->when($lotteryType==1, function($query) {
-                    $query->where('color', 2)->where('is_add', '<>', 0);
+                    $query->where('color', 2);
                 })
                 ->where('year', $year)->where('lotteryType', $lotteryType)->select(['max_issue', 'issues']);
             $firstModel = $res->firstOrFail();
