@@ -118,7 +118,10 @@ class AutoXgAmMaxIssues extends Command
                             ]);
                         echo ($config['type'] == 1 ? '港彩' : '澳彩') . $item['keyword'] . "第" . $item['number'] . "期已存在，跳过更新\n";
                     } else {
-                        if ($item['number'] == $issues[0] + 1) { // 元旦前要修改
+                        $firstIssue = rtrim($issues[0], '第');
+                        $firstIssue = ltrim($firstIssue, '期');
+                        dd($firstIssue);
+                        if ($item['number'] == $firstIssue + 1) { // 元旦前要修改
                             array_unshift($issues, "第" . $item['number'] . "期");
                             DB::table('year_pics')
                                 ->where('id', $info['id'])
