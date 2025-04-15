@@ -381,9 +381,18 @@ class HistoryService extends BaseApiService
                 $currentMaxIssue = str_replace($year, '', $currentMaxIssue);
             }
             if ($currentMaxIssue != $firstModel->max_issue) {
-                YearPic::query()->where('year', $year)->where('lotteryType', $lotteryType)->update([
-                    'max_issue'=>$currentMaxIssue
-                ]);
+                YearPic::query()
+                    ->when($lotteryType==2, function($query) {
+                        $query->where('is_add', '<>', 0);
+                    })
+                    ->when($lotteryType==1, function($query) {
+                        $query->where('color', 2);
+                    })
+                    ->where('year', $year)
+                    ->where('lotteryType', $lotteryType)
+                    ->update([
+                        'max_issue'=>$currentMaxIssue
+                    ]);
             }
             if ($currentMaxIssue != $issues) {
                 if ($currentMaxIssue>$issues) {
@@ -392,9 +401,18 @@ class HistoryService extends BaseApiService
                         array_unshift($issuesArr, '第'.$i.'期');
                     }
                 }
-                YearPic::query()->where('year', $year)->where('lotteryType', $lotteryType)->update([
-                    'max_issue'=>$currentMaxIssue, 'issues'=>json_encode($issuesArr)
-                ]);
+                YearPic::query()
+                    ->when($lotteryType==2, function($query) {
+                        $query->where('is_add', '<>', 0);
+                    })
+                    ->when($lotteryType==1, function($query) {
+                        $query->where('color', 2);
+                    })
+                    ->where('year', $year)
+                    ->where('lotteryType', $lotteryType)
+                    ->update([
+                        'max_issue'=>$currentMaxIssue, 'issues'=>json_encode($issuesArr)
+                    ]);
             }
             return ;
         }catch (\Exception $exception) {
