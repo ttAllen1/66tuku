@@ -38,7 +38,7 @@ class UserLevelService extends BaseApiService
             ->orderBy('id','desc')
             ->paginate($data['limit'])
             ->toArray();
-        $http = $this->getHttp();
+        $http = config('config.full_srv_img_prefix');
         foreach ($list['data'] as $k=>$v){
             if($v['image_one']['open'] == 1){
                 $list['data'][$k]['image_url'] = $http .$v['image_one']['url'];
@@ -85,7 +85,7 @@ class UserLevelService extends BaseApiService
             ])
             ->find($id)->toArray();
         if($info['image_one']['open'] == 1){
-            $info['image_url'] = $this->getHttp().$info['image_one']['url'];
+            $info['image_url'] = config('config.full_srv_img_prefix').$info['image_one']['url'];
         }else{
             $info['image_url'] = $info['image_one']['url'];
         }
