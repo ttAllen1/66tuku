@@ -1131,7 +1131,7 @@ class BaseService
      */
     protected function attachS3Video(string $videoUrl, Model $model): string
     {
-        $videoUrl = str_replace($this->getHttp(), '', $videoUrl);
+        $videoUrl = str_replace([$this->getHttp(), config('config.full_srv_img_prefix')], '', $videoUrl);
         $videoUrl = ltrim($videoUrl, '/');
         if (!file_exists($videoUrl)) {
             throw new FileNotFoundException('视频资源不存在，保存失败');
