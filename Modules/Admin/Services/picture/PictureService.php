@@ -178,6 +178,7 @@ class PictureService extends BaseApiService
                     $query->where('year', date('Y'))->select(['pictureTypeId', 'keyword', 'max_issue', 'year']);
                 }
             ])
+            ->where('color', '<>', 3)
             ->orderBy('lotteryType')
             ->orderBy('sort')
             ->paginate($params['limit'])->toArray();
