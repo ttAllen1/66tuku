@@ -125,6 +125,7 @@ class DiscoverService extends BaseApiService
             }
             DB::table('users')->where('id', $userId)->increment('releases');
         }catch (\Exception $exception) {
+            dd($exception->getMessage(), $exception->getLine());
             return $this->apiError(ApiMsgData::ADD_API_ERROR);
         }
 
