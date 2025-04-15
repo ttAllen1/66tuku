@@ -66,7 +66,7 @@ class IndexGuess extends Command
             $rdsData = $this->getRedisDataWithRetry($lottery);
             $nextIssue = $rdsData['next_issue'] ?? null;
 
-            if (!$nextIssue || $latestPeriod === $nextIssue || in_array($rdsData['current_te_num'], ["后", "快", "步", "宾"])) {
+            if (!$nextIssue || $latestPeriod === $nextIssue || in_array($rdsData['current_te_num'], ["后", "快", "步", "宾", "00"])) {
                 return;
             }
 
