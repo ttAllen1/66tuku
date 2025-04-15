@@ -46,7 +46,7 @@ class ImageService extends BaseApiService
                             [
                                 'image_id'  => 0,
                                 'type'      => $type,
-                                'url'       => $location == 'video' ? (config('config.full_srv_img_prefix').'/upload/video_upload_ok.png') : config('config.full_srv_img_prefix').'/'.$url,
+                                'url'       => $location == 'video' ? (config('config.full_srv_img_prefix').'/upload/video_upload_ok.png') : config('config.full_srv_img_prefix').$url,
                                 'video'     => $location == 'video' ? (config('config.full_srv_img_prefix').$url) : '',
                                 'upload'    => $url
                             ]);

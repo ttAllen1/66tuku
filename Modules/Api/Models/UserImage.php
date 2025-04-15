@@ -19,7 +19,7 @@ class UserImage extends BaseApiModel
     {
 //        return $value ? (Str::startsWith($value, 'http') ? $value : (new BaseService())->getHttp().'/'.$value) : '';
 //        return $value ? (Str::startsWith($value, 'http') ? $value : 'https://api.48tkapi.com/'.$value) : '';
-        return $value ? (Str::startsWith($value, 'http') ? $value : 'https://api.49api66.com:8443/'.$value) : '';
+        return $value ? (Str::startsWith($value, 'http') ? $value : config('config.full_srv_img_prefix').$value) : '';
     }
 
     // 监听删除事件
