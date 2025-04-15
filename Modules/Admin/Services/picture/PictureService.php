@@ -9,6 +9,7 @@ namespace Modules\Admin\Services\picture;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Modules\Admin\Models\AuthConfig;
 use Modules\Admin\Models\AuthImage;
 use Modules\Admin\Models\IndexPic;
@@ -184,7 +185,29 @@ class PictureService extends BaseApiService
         foreach ($indexPic['data'] as $k => $v) {
             $indexPic['data'][$k]['is_video'] = (bool)$v['is_video']; // 是否是视频
             $indexPic['data'][$k]['image'] = $this->getPicUrl($v['color'], $v['pic_other']['max_issue'], $v['pic_other']['keyword'], $v['lotteryType']);
+//            $indexPic['data'][$k]['preImage'] = $this->getPicUrl($v['color'], $v['pic_other']['max_issue'] - 1, $v['pic_other']['keyword'], $v['lotteryType']);
+
+            if ( ($v['lotteryType'] == 2 || $v['lotteryType'] == 1) && Str::startsWith($indexPic['data'][$k]['image'], 'https://tk2.tuku.fit')) {
+                $indexPic['data'][$k]['image'] = Str::replace('/m/', '/', $indexPic['data'][$k]['image']);
+                // 处理黑白
+                if (Str::contains($indexPic['data'][$k]['image'], 'black')) {
+                    $arr = explode('black', $indexPic['data'][$k]['image']);
+                    $indexPic['data'][$k]['image'] = "https://amtk.tuku.fit/galleryfiles/system/big-pic/black/" . date('Y') . $arr[1];
+                }
+            }
+
             $indexPic['data'][$k]['preImage'] = $this->getPicUrl($v['color'], $v['pic_other']['max_issue'] - 1, $v['pic_other']['keyword'], $v['lotteryType']);
+
+            if ( ($v['lotteryType'] == 2 || $v['lotteryType'] == 1) && Str::startsWith($indexPic['data'][$k]['preImage'], 'https://tk2.tuku.fit')) {
+                $indexPic['data'][$k]['preImage'] = Str::replace('/m/', '/', $indexPic['data'][$k]['preImage']);
+                // 处理黑白
+                if (Str::contains($indexPic['data'][$k]['preImage'], 'black')) {
+                    $arr = explode('black', $indexPic['data'][$k]['preImage']);
+                    $indexPic['data'][$k]['preImage'] = "https://amtk.tuku.fit/galleryfiles/system/big-pic/black/" . date('Y') . $arr[1];
+                }
+            }
+
+
             // $pic_lists['data'][$k]['previousPictureUrl'] = $this->getPicUrl($list['color'], $previousIssue-1, $list['pic_other']['keyword'], $list['lotteryType']); // , 'jpg', $params['lotteryType']==3?2024:2023
             if ($v['lotteryType'] == 2 || $v['lotteryType'] == 6 || $v['lotteryType'] == 1) {
                 $urlPrefixArr = $this->getImgPrefix()[$v['pic_other']['year']][$v['lotteryType']];
@@ -192,23 +215,23 @@ class PictureService extends BaseApiService
                 if ($v['pictureTypeId'] == "33344") {
                     if (is_array($urlPrefixArr)) {
                         foreach ($urlPrefixArr as $vv) {
-                            $indexPic['data'][$k]['image'] = str_replace($vv . 'm/', 'https://tu.tuku.fit/aomen/' . $v['pic_other']['year'] . '/', $indexPic['data'][$k]['image']);
-                            $indexPic['data'][$k]['preImage'] = str_replace($vv . 'm/', 'https://tu.tuku.fit/aomen/' . $v['pic_other']['year'] . '/', $indexPic['data'][$k]['preImage']);
+                            $indexPic['data'][$k]['image'] = str_replace([$vv . 'm/', $vv . 'm/col/', $vv . 'col/', $vv . '/col/'], 'https://tu.tuku.fit/aomen/' . $v['pic_other']['year'] . '/', $indexPic['data'][$k]['image']);
+                            $indexPic['data'][$k]['preImage'] = str_replace([$vv . 'm/', $vv . 'm/col/', $vv . 'col/', $vv . '/col/'], 'https://tu.tuku.fit/aomen/' . $v['pic_other']['year'] . '/', $indexPic['data'][$k]['preImage']);
                         }
                     }
                 } else if (in_array($v['pictureTypeId'], $this->_all_pictureIds)) {
                     if (is_array($urlPrefixArr)) {
                         foreach ($urlPrefixArr as $vv) {
                             if (in_array($v['pictureTypeId'], $this->_am_pictureIds)) {
-                                $indexPic['data'][$k]['image'] = str_replace($vv . 'm/col/', 'https://amtk.tuku.fit/galleryfiles/system/big-pic/col/' . $v['pic_other']['year'] . '/', $indexPic['data'][$k]['image']);
-                                $indexPic['data'][$k]['preImage'] = str_replace($vv . 'm/col/', 'https://amtk.tuku.fit/galleryfiles/system/big-pic/col/' . $v['pic_other']['year'] . '/', $indexPic['data'][$k]['preImage']);
+                                $indexPic['data'][$k]['image'] = str_replace([$vv . 'm/col/', $vv . 'col/', $vv . '/col/'], 'https://amtk.tuku.fit/galleryfiles/system/big-pic/col/' . $v['pic_other']['year'] . '/', $indexPic['data'][$k]['image']);
+                                $indexPic['data'][$k]['preImage'] = str_replace([$vv . 'm/col/', $vv . 'col/', $vv . '/col/'], 'https://amtk.tuku.fit/galleryfiles/system/big-pic/col/' . $v['pic_other']['year'] . '/', $indexPic['data'][$k]['preImage']);
                             } else if (in_array($v['pictureTypeId'], $this->_kl8_pictureIds)) {
-                                $indexPic['data'][$k]['image'] = str_replace($vv . 'col/', 'https://am.tuku.fit/galleryfiles/system/big-pic/col/', $indexPic['data'][$k]['image']);
-                                $indexPic['data'][$k]['preImage'] = str_replace($vv . 'col/', 'https://am.tuku.fit/galleryfiles/system/big-pic/col/', $indexPic['data'][$k]['preImage']);
+                                $indexPic['data'][$k]['image'] = str_replace([$vv . 'm/col/', $vv . 'col/', $vv . '/col/'], 'https://am.tuku.fit/galleryfiles/system/big-pic/col/', $indexPic['data'][$k]['image']);
+                                $indexPic['data'][$k]['preImage'] = str_replace([$vv . 'm/col/', $vv . 'col/', $vv . '/col/'], 'https://am.tuku.fit/galleryfiles/system/big-pic/col/', $indexPic['data'][$k]['preImage']);
                             } else if (in_array($v['pictureTypeId'], $this->_xg_pictureIds)) { // https://xg.tuku.fit/galleryfiles/system/big-pic/col/2024/075/ktzsx.jpg
 //                                dd($vv, $indexPic['data'][$k]['image']);
-                                $indexPic['data'][$k]['image'] = str_replace($vv . 'm/col/', 'https://xg.tuku.fit/galleryfiles/system/big-pic/col/' . $v['pic_other']['year'] . '/', $indexPic['data'][$k]['image']);
-                                $indexPic['data'][$k]['preImage'] = str_replace($vv . 'm/col/', 'https://xg.tuku.fit/galleryfiles/system/big-pic/col/' . $v['pic_other']['year'] . '/', $indexPic['data'][$k]['preImage']);
+                                $indexPic['data'][$k]['image'] = str_replace([$vv . 'm/col/', $vv . 'col/', $vv . '/col/'], 'https://xg.tuku.fit/galleryfiles/system/big-pic/col/' . $v['pic_other']['year'] . '/', $indexPic['data'][$k]['image']);
+                                $indexPic['data'][$k]['preImage'] = str_replace([$vv . 'm/col/', $vv . 'col/', $vv . '/col/'], 'https://xg.tuku.fit/galleryfiles/system/big-pic/col/' . $v['pic_other']['year'] . '/', $indexPic['data'][$k]['preImage']);
                             }
                         }
                     }
