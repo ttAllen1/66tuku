@@ -2,10 +2,10 @@
 
 return [
 //    'srv_img_prefix' => '49tk.tukuapi4499.com',
-    'srv_img_prefix' => 'api.49api66.com:8443',
+    'srv_img_prefix' => '66bd.4tt9kk.com',
 //    'full_srv_img_prefix' => 'https://49tk.tukuapi4499.com/',
-    'full_srv_img_prefix' => 'https://api.49api66.com:8443/',
-    'domain' => 'https://api.49api66.com:8443',
+    'full_srv_img_prefix' => 'https://66bd.4tt9kk.com/',
+    'domain' => 'https://66bd.4tt9kk.com',
     'aes_method'     => 'AES-128-CBC',
     'aes_key'=> 'd7f404619cbb59ci',
     'aes_iv'=>'d7f404619cbb59ci',
