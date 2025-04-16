@@ -1322,6 +1322,10 @@ class PictureService extends BaseApiService
             if (!$res['data']) {
                 return $this->apiSuccess();
             }
+            if (request()->input('ts', 0)==1) {
+                dd($res);
+            }
+
             $list = $res['data'];
             $pidDetailIds = [];
             foreach ($list as $k => $v) {
