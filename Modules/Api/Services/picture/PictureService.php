@@ -1378,7 +1378,7 @@ class PictureService extends BaseApiService
 
             return $this->apiSuccess(ApiMsgData::GET_API_SUCCESS, $list);
         } catch (\Exception $exception) {
-            dd($exception->getMessage(), $exception->getLine(), $exception->getFile());
+            dd($exception->getMessage(), $exception->getLine(), $exception->getFile(), $list[$k]);
         }
     }
 }
