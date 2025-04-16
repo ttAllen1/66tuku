@@ -1294,6 +1294,7 @@ class PictureService extends BaseApiService
 //        if ($userId) {
             $res = IndexPic::query()
                 ->where('color', 1)
+                ->where('pictureTypeId', '<>', 33344)
                 ->where('lotteryType', $params['lotteryType'])
                 ->orderBy('sort')
                 ->with([
@@ -1331,6 +1332,22 @@ class PictureService extends BaseApiService
                 // 图片
                 $list[$k]['largePictureUrl'] = $this->getPicUrl($v['color'], $v['pic_other']['max_issue'], $v['pic_other']['keyword'], $params['lotteryType'], 'jpg', $v['pic_other']['year'], true);
                 $list[$k]['preLargePictureUrl'] = $this->getPicUrl($v['color'], $v['pic_other']['max_issue']-1, $v['pic_other']['keyword'], $params['lotteryType'], 'jpg', $v['pic_other']['year'], true);
+
+                if ( ($params['lotteryType'] == 2 || $params['lotteryType'] == 1) && Str::startsWith($list[$k]['largePictureUrl'], 'https://tk2.tuku.fit')) {
+                    $list[$k]['largePictureUrl'] = Str::replace('/m/', '/', $list[$k]['largePictureUrl']);
+                    // 处理黑白
+                    if (Str::contains($list[$k]['largePictureUrl'], 'black')) {
+                        $arr = explode('black', $list[$k]['largePictureUrl']);
+                        $list[$k]['largePictureUrl'] = "https://amtk.tuku.fit/galleryfiles/system/big-pic/black/" . date('Y') . $arr[1];
+                    }
+
+                    $list[$k]['preLargePictureUrl'] = Str::replace('/m/', '/', $list[$k]['preLargePictureUrl']);
+                    // 处理黑白
+                    if (Str::contains($list[$k]['preLargePictureUrl'], 'black')) {
+                        $arr = explode('black', $list[$k]['preLargePictureUrl']);
+                        $list[$k]['preLargePictureUrl'] = "https://amtk.tuku.fit/galleryfiles/system/big-pic/black/" . date('Y') . $arr[1];
+                    }
+                }
             }
 
 //        dd($pidDetailIds);
