@@ -661,6 +661,8 @@ class PictureService extends BaseApiService
      * @param $keyword
      * @param $lotteryType
      * @param int $readNum
+     * @param int $commentCount
+     * @param int $thumbUpCount
      * @return mixed
      */
     private function toPicDetailDB($PicDetailModel, $pictureTypeId, $pictureId, $pictureName, $current_issue, $year, $color, $keyword, $lotteryType, $readNum=0, $commentCount=0, $thumbUpCount=0)
@@ -713,6 +715,44 @@ class PictureService extends BaseApiService
             $picDetailModel = PicDetail::query()->where('pictureId', $params['pictureId']);
 
             return (new FollowService())->follow($picDetailModel);
+        } catch (ModelNotFoundException $exception) {
+            throw new CustomException(['message' => 'pictureId不存在']);
+        }
+    }
+
+    /**
+     * 照片墙点赞
+     * @param $params
+     * @return JsonResponse
+     * @throws CustomException
+     */
+    public function flow_follow($params): JsonResponse
+    {
+        try {
+            // 先判断该pictureId在详情表中是否存在
+            $isExists = DB::table('year_pics')
+                ->where('pictureId', $params['pictureId'])
+                ->exists();
+            if ($isExists) {
+                // 存在
+                return $this->follow($params);
+            } else {
+                // 不存在
+                // $PicDetailModel, $pictureTypeId, $pictureId, $pictureName, $current_issue, $year, $color,
+                // $keyword, $lotteryType, $readNum=0, $commentCount=0, $thumbUpCount=0
+                $picDetailModel = $this->toPicDetailDB(
+                    PicDetail::query(),
+                    $params['pictureTypeId'],
+                    $params['pictureId'],
+                    $params['pictureName'],
+                    $params['issue'],
+                    $params['year'],
+                    $params['color'],
+                    $params['keyword'],
+                    $params['lotteryType']
+                );
+                return (new FollowService())->follow($picDetailModel);
+            }
         } catch (ModelNotFoundException $exception) {
             throw new CustomException(['message' => 'pictureId不存在']);
         }

@@ -151,6 +151,7 @@ Route::group(["prefix"=>"v1", "middleware"=>["GlobalMiddleware"]],function (){
         Route::post('comment/follow', 'v1\CommentController@follow');
         // 图片点赞接口
         Route::post('picture/follow', 'v1\PictureController@follow');
+        Route::post('picture/flow_follow', 'v1\PictureController@flow_follow');
         // 图片收藏接口
         Route::post('picture/collect', 'v1\PictureController@collect');
         // 发现

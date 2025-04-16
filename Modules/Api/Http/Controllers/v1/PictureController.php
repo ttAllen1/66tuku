@@ -114,6 +114,13 @@ class PictureController extends BaseApiController
         return (new PictureService())->follow($request->all());
     }
 
+    public function flow_follow(PictureRequest $request)
+    {
+        $request->validate('flow_follow');
+
+        return (new PictureService())->flow_follow($request->all());
+    }
+
     /**
      * 图片（取消）收藏
      * @param PictureRequest $request

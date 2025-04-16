@@ -30,6 +30,8 @@ class PictureRequest extends FormRequest
             'color'         => "required|" . Rule::in([1, 2]),
             'pictureTypeId' => "required|is_positive_integer",
             'pictureId'     => "required|is_positive_integer",
+            'issue'     => "required|numeric",
+            'pictureName'     => "required",
             'vote_zodiac'   => "required|" . Rule::in([
                     '鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'
                 ]),
@@ -73,6 +75,7 @@ class PictureRequest extends FormRequest
             'issues'        => ['pictureTypeId', 'year'],
             'vote'          => ['pictureId', 'vote_zodiac'],
             'follow'        => ['pictureId'],
+            'flow_follow'        => ['pictureId', 'lotteryType', 'year', 'pictureTypeId', 'pictureName', 'color', 'issue'],
             'collect'       => ['pictureId'],
             'recommend'     => ['pictureTypeId', 'year', 'page', 'lotteryType'],
             'series_detail' => ['id'],
