@@ -1366,13 +1366,13 @@ class PictureService extends BaseApiService
                     } else if (in_array($v['pictureTypeId'], $this->_all_pictureIds)) {
                         if (is_array($urlPrefixArr)) {
                             foreach ($urlPrefixArr as $vv) {
-                                if (in_array($list['pictureTypeId'], $this->_am_pictureIds)) { // https://am.tuku.fit/galleryfiles/system/m/col/2024/128/ammh.jpg
+                                if (in_array($v['pictureTypeId'], $this->_am_pictureIds)) { // https://am.tuku.fit/galleryfiles/system/m/col/2024/128/ammh.jpg
                                     $list[$k]['largePictureUrl'] = str_replace([$vv . 'm/col/', $vv . 'col/', $vv . '/col/'], 'https://amtk.tuku.fit/galleryfiles/system/m/col/' . $v['pic_other']['year'] . '/', $list[$k]['largePictureUrl']);
                                     $list[$k]['preLargePictureUrl'] = str_replace([$vv . 'm/col/', $vv . 'col/', $vv . '/col/'], 'https://amtk.tuku.fit/galleryfiles/system/m/col/' . $v['pic_other']['year'] . '/', $list[$k]['preLargePictureUrl']);
-                                } else if (in_array($list['pictureTypeId'], $this->_kl8_pictureIds)) {
+                                } else if (in_array($v['pictureTypeId'], $this->_kl8_pictureIds)) {
                                     $list[$k]['largePictureUrl'] = str_replace($vv . 'col/', 'https://am.tuku.fit/galleryfiles/system/m/col/', $list[$k]['largePictureUrl']);
                                     $list[$k]['preLargePictureUrl'] = str_replace($vv . 'col/', 'https://am.tuku.fit/galleryfiles/system/m/col/', $list[$k]['preLargePictureUrl']);
-                                } else if (in_array($list['pictureTypeId'], $this->_xg_pictureIds)) {
+                                } else if (in_array($v['pictureTypeId'], $this->_xg_pictureIds)) {
                                     $list[$k]['largePictureUrl'] = str_replace([$vv . 'm/col/', $vv . '/m/col/', $vv . '/col/', $vv . '/col/'], 'https://xg.tuku.fit/galleryfiles/system/big-pic/col/' . $v['pic_other']['year'] . '/', $list[$k]['largePictureUrl']);
                                     $list[$k]['preLargePictureUrl'] = str_replace([$vv . 'm/col/', $vv . '/m/col/', $vv . '/col/', $vv . '/col/'], 'https://xg.tuku.fit/galleryfiles/system/big-pic/col/' . $v['pic_other']['year'] . '/', $list[$k]['preLargePictureUrl']);
                                 }
