@@ -1360,10 +1360,10 @@ class PictureService extends BaseApiService
                                 $list[$k]['preLargePictureUrl'] = str_replace([$vv . 'm/col/', $vv . 'col/', $vv . '/col/'], 'https://tu.tuku.fit/aomen/' . $v['pic_other']['year'] . '/col/', $list[$k]['preLargePictureUrl']);
                             }
                         }
-                    } else if ($list['pictureTypeId'] == 69310) {
+                    } else if ($v['pictureTypeId'] == 69310) {
                         $list[$k]['largePictureUrl'] = str_replace('/m/', '/big-pic/', $list[$k]['largePictureUrl']);
                         $list[$k]['preLargePictureUrl'] = str_replace('/m/', '/big-pic/', $list[$k]['preLargePictureUrl']);
-                    } else if (in_array($list['pictureTypeId'], $this->_all_pictureIds)) {
+                    } else if (in_array($v['pictureTypeId'], $this->_all_pictureIds)) {
                         if (is_array($urlPrefixArr)) {
                             foreach ($urlPrefixArr as $vv) {
                                 if (in_array($list['pictureTypeId'], $this->_am_pictureIds)) { // https://am.tuku.fit/galleryfiles/system/m/col/2024/128/ammh.jpg
