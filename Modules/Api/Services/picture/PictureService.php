@@ -1290,6 +1290,7 @@ class PictureService extends BaseApiService
     public function get_flow_list($params)
     {
         try {
+
             $userId = auth('user')->id() ?? 0;
 //        if ($userId) {
             $res = IndexPic::query()
@@ -1346,6 +1347,37 @@ class PictureService extends BaseApiService
                     if (Str::contains($list[$k]['preLargePictureUrl'], 'black')) {
                         $arr = explode('black', $list[$k]['preLargePictureUrl']);
                         $list[$k]['preLargePictureUrl'] = "https://amtk.tuku.fit/galleryfiles/system/big-pic/black/" . date('Y') . $arr[1];
+                    }
+                }
+
+                if ($params['lotteryType'] == 2 || $params['lotteryType'] == 6 || $params['lotteryType'] == 1) {
+                    $urlPrefixArr = $this->getImgPrefix()[$v['pic_other']['year']][$params['lotteryType']];
+
+                    if ($v['pictureTypeId'] == "33344") {
+                        if (is_array($urlPrefixArr)) {
+                            foreach ($urlPrefixArr as $vv) {
+                                $list[$k]['largePictureUrl'] = str_replace([$vv . 'm/col/', $vv . 'col/', $vv . '/col/'], 'https://tu.tuku.fit/aomen/' . $v['pic_other']['year'] . '/col/', $list[$k]['largePictureUrl']);
+                                $list[$k]['preLargePictureUrl'] = str_replace([$vv . 'm/col/', $vv . 'col/', $vv . '/col/'], 'https://tu.tuku.fit/aomen/' . $v['pic_other']['year'] . '/col/', $list[$k]['preLargePictureUrl']);
+                            }
+                        }
+                    } else if ($list['pictureTypeId'] == 69310) {
+                        $list[$k]['largePictureUrl'] = str_replace('/m/', '/big-pic/', $list[$k]['largePictureUrl']);
+                        $list[$k]['preLargePictureUrl'] = str_replace('/m/', '/big-pic/', $list[$k]['preLargePictureUrl']);
+                    } else if (in_array($list['pictureTypeId'], $this->_all_pictureIds)) {
+                        if (is_array($urlPrefixArr)) {
+                            foreach ($urlPrefixArr as $vv) {
+                                if (in_array($list['pictureTypeId'], $this->_am_pictureIds)) { // https://am.tuku.fit/galleryfiles/system/m/col/2024/128/ammh.jpg
+                                    $list[$k]['largePictureUrl'] = str_replace([$vv . 'm/col/', $vv . 'col/', $vv . '/col/'], 'https://amtk.tuku.fit/galleryfiles/system/m/col/' . $v['pic_other']['year'] . '/', $list[$k]['largePictureUrl']);
+                                    $list[$k]['preLargePictureUrl'] = str_replace([$vv . 'm/col/', $vv . 'col/', $vv . '/col/'], 'https://amtk.tuku.fit/galleryfiles/system/m/col/' . $v['pic_other']['year'] . '/', $list[$k]['preLargePictureUrl']);
+                                } else if (in_array($list['pictureTypeId'], $this->_kl8_pictureIds)) {
+                                    $list[$k]['largePictureUrl'] = str_replace($vv . 'col/', 'https://am.tuku.fit/galleryfiles/system/m/col/', $list[$k]['largePictureUrl']);
+                                    $list[$k]['preLargePictureUrl'] = str_replace($vv . 'col/', 'https://am.tuku.fit/galleryfiles/system/m/col/', $list[$k]['preLargePictureUrl']);
+                                } else if (in_array($list['pictureTypeId'], $this->_xg_pictureIds)) {
+                                    $list[$k]['largePictureUrl'] = str_replace([$vv . 'm/col/', $vv . '/m/col/', $vv . '/col/', $vv . '/col/'], 'https://xg.tuku.fit/galleryfiles/system/big-pic/col/' . $v['pic_other']['year'] . '/', $list[$k]['largePictureUrl']);
+                                    $list[$k]['preLargePictureUrl'] = str_replace([$vv . 'm/col/', $vv . '/m/col/', $vv . '/col/', $vv . '/col/'], 'https://xg.tuku.fit/galleryfiles/system/big-pic/col/' . $v['pic_other']['year'] . '/', $list[$k]['preLargePictureUrl']);
+                                }
+                            }
+                        }
                     }
                 }
             }
