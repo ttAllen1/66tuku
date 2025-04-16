@@ -19,7 +19,7 @@ class IndexPic extends BaseApiModel
     {
         return $this->hasOne(PicDetail::class, 'pictureTypeId', 'pictureTypeId')
             ->where('year', date('Y'))
-            ->orderBy('issue', 'desc')
-            ->limit(1);
+            ->orderBy('issue', 'desc');
+
     }
 }
