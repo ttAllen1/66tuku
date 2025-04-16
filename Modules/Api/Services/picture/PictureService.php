@@ -730,7 +730,7 @@ class PictureService extends BaseApiService
     {
         try {
             // 先判断该pictureId在详情表中是否存在
-            $isExists = DB::table('year_pics')
+            $isExists = DB::table('pic_details')
                 ->where('pictureId', $params['pictureId'])
                 ->exists();
             if ($isExists) {
