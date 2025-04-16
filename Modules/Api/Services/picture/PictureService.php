@@ -1330,6 +1330,7 @@ class PictureService extends BaseApiService
                 }
                 // 图片
                 $list[$k]['largePictureUrl'] = $this->getPicUrl($v['color'], $v['pic_other']['max_issue'], $v['pic_other']['keyword'], $params['lotteryType'], 'jpg', $v['pic_other']['year'], true);
+                $list[$k]['preLargePictureUrl'] = $this->getPicUrl($v['color'], $v['pic_other']['max_issue']-1, $v['pic_other']['keyword'], $params['lotteryType'], 'jpg', $v['pic_other']['year'], true);
             }
 
 //        dd($pidDetailIds);
