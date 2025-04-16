@@ -740,7 +740,7 @@ class PictureService extends BaseApiService
                 // 不存在
                 // $PicDetailModel, $pictureTypeId, $pictureId, $pictureName, $current_issue, $year, $color,
                 // $keyword, $lotteryType, $readNum=0, $commentCount=0, $thumbUpCount=0
-                $picDetailModel = $this->toPicDetailDB(
+                $this->toPicDetailDB(
                     PicDetail::query(),
                     $params['pictureTypeId'],
                     $params['pictureId'],
@@ -751,7 +751,7 @@ class PictureService extends BaseApiService
                     $params['keyword'],
                     $params['lotteryType']
                 );
-                return (new FollowService())->follow($picDetailModel);
+                return (new FollowService())->follow(PicDetail::query()->where('pictureId', $params['pictureId']));
             }
         } catch (ModelNotFoundException $exception) {
             throw new CustomException(['message' => 'pictureId不存在']);
