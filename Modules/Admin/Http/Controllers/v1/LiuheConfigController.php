@@ -54,6 +54,6 @@ class LiuheConfigController extends BaseApiController
     public function liuhe_lottery_store(LiuheConfigRequest $request)
     {
         $request->validate('liuhe_lottery_create');
-        return (new LiuHeConfigService())->liuhe_lottery_create($request->only(['lotteryType', 'name', 'status', 'icon', 'icons']));
+        return (new LiuHeConfigService())->liuhe_lottery_create($request->only(['lotteryType', 'name', 'status', 'icon', 'icons', 'sort']));
     }
 }

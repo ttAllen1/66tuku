@@ -31,6 +31,7 @@ class LiuheConfigRequest extends FormRequest
             'status'                    => 'required|min:1|max:2',
 
             'lotteryType'       => 'required|int|min:1',
+            'sort'       => 'required|int|min:1',
             'name'       => 'required|unique:lottery_sets,name,'.request()->get('id'),
         ];
     }
@@ -52,7 +53,7 @@ class LiuheConfigRequest extends FormRequest
                 'config_title', 'config_code_mark', 'status'
             ],
             'liuhe_lottery_create'  => [
-                'lotteryType', 'name'
+                'lotteryType', 'name', 'sort'
             ]
         ];
     }
