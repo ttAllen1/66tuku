@@ -1022,6 +1022,7 @@ class PictureService extends BaseApiService
             $picDetailIds = array_map(function ($item) {
                 return $item['id'];
             }, $picDetailIds);
+            dd($picDetailIds);
             $exists = DB::table('user_collects')
                 ->where('user_id', $userId)
                 ->whereIn('collectable_id', $picDetailIds)
