@@ -2,11 +2,9 @@
 
 namespace Modules\Api\Http\Controllers\v1;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Modules\Admin\Jobs\OpenEdLottery;
+use Illuminate\Http\Request;
 use Modules\Api\Http\Requests\LiuheRequest;
-use Modules\Api\Models\YearPic;
 use Modules\Api\Services\liuhe\LiuheService;
 use Modules\Common\Exceptions\CustomException;
 

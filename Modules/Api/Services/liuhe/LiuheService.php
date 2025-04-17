@@ -738,7 +738,7 @@ class LiuheService extends BaseApiService
     public function lottery(): JsonResponse
     {
         $list = LotterySet::query()
-            ->orderBy('lotteryType')
+            ->orderBy('sort')
             ->where('status', 1)
             ->get()->toArray();
 
