@@ -114,7 +114,12 @@ class PictureController extends BaseApiController
         return (new PictureService())->follow($request->all());
     }
 
-    public function flow_follow(PictureRequest $request)
+    /**
+     * @param PictureRequest $request
+     * @return JsonResponse
+     * @throws CustomException
+     */
+    public function flow_follow(PictureRequest $request): JsonResponse
     {
         $request->validate('flow_follow');
 
@@ -132,6 +137,19 @@ class PictureController extends BaseApiController
         $request->validate('collect');
 
         return (new PictureService())->collect($request->all());
+    }
+
+    /**
+     * 照片墙图片（取消）收藏
+     * @param PictureRequest $request
+     * @return JsonResponse
+     * @throws CustomException
+     */
+    public function flow_collect(PictureRequest $request): JsonResponse
+    {
+        $request->validate('flow_follow');
+
+        return (new PictureService())->flow_collect($request->all());
     }
 
     /**

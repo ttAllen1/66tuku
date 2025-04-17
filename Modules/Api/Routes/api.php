@@ -154,6 +154,7 @@ Route::group(["prefix"=>"v1", "middleware"=>["GlobalMiddleware"]],function (){
         Route::post('picture/flow_follow', 'v1\PictureController@flow_follow');
         // 图片收藏接口
         Route::post('picture/collect', 'v1\PictureController@collect');
+        Route::post('picture/flow_collect', 'v1\PictureController@flow_collect');
         // 发现
         Route::post('discovery/follow', 'v1\DiscoveryController@follow');      // 点赞
         Route::post('discovery/collect', 'v1\DiscoveryController@collect');    // 收藏

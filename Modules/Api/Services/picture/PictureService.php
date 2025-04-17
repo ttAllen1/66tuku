@@ -1005,6 +1005,7 @@ class PictureService extends BaseApiService
     public function collect($params): JsonResponse
     {
         try {
+            $userId = auth('user')->id();
             $picDetailIds = DB::table('pic_details')
                 ->select('id')
                 ->where('pictureTypeId', function ($query) use ($params) {
@@ -1022,14 +1023,14 @@ class PictureService extends BaseApiService
                 return $item['id'];
             }, $picDetailIds);
             $exists = DB::table('user_collects')
-                ->where('user_id', auth('user')->id())
+                ->where('user_id', $userId)
                 ->whereIn('collectable_id', $picDetailIds)
                 ->where('collectable_type', 'Modules\Api\Models\PicDetail')
                 ->exists();
             if ($exists) {
                 // 取消收藏
                 $res = DB::table('user_collects')
-                    ->where('user_id', auth('user')->id())
+                    ->where('user_id', $userId)
                     ->whereIn('collectable_id', $picDetailIds)
                     ->where('collectable_type', 'Modules\Api\Models\PicDetail')
                     ->delete();
@@ -1040,7 +1041,7 @@ class PictureService extends BaseApiService
             } else {
                 $res = DB::table('user_collects')
                     ->insert([
-                        'user_id'          => auth('user')->id(),
+                        'user_id'          => $userId,
                         'collectable_id'   => $picDetailIds[0],
                         'collectable_type' => 'Modules\Api\Models\PicDetail',
                         'created_at'       => date('Y-m-d H:i:s')
@@ -1052,6 +1053,38 @@ class PictureService extends BaseApiService
             }
 
             return $this->apiSuccess('请刷新重试');
+        } catch (ModelNotFoundException $exception) {
+            throw new CustomException(['message' => 'pictureId不存在']);
+        }
+    }
+
+    /**
+     * 照片墙收藏
+     * @param $params
+     * @return JsonResponse
+     * @throws CustomException
+     */
+    public function flow_collect($params): JsonResponse
+    {
+        try {
+            // 先判断该pictureId在详情表中是否存在
+            $isExists = DB::table('pic_details')
+                ->where('pictureId', $params['pictureId'])
+                ->exists();
+            if (!$isExists) {
+                $this->toPicDetailDB(
+                    PicDetail::query(),
+                    $params['pictureTypeId'],
+                    $params['pictureId'],
+                    $params['pictureName'],
+                    $params['issue'],
+                    $params['year'],
+                    $params['color'],
+                    $params['keyword'],
+                    $params['lotteryType']
+                );
+            }
+            return $this->collect($params);
         } catch (ModelNotFoundException $exception) {
             throw new CustomException(['message' => 'pictureId不存在']);
         }
