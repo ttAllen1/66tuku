@@ -729,6 +729,9 @@ class PictureService extends BaseApiService
     public function flow_follow($params): JsonResponse
     {
         try {
+            if ($params['pictureId'] != $params['year'] . $params['issue'] . $params['pictureTypeId']) {
+                throw new CustomException(['message' => 'pictureId不正确']);
+            }
             // 先判断该pictureId在详情表中是否存在
             $isExists = DB::table('pic_details')
                 ->where('pictureId', $params['pictureId'])
@@ -755,6 +758,8 @@ class PictureService extends BaseApiService
             }
         } catch (ModelNotFoundException $exception) {
             throw new CustomException(['message' => 'pictureId不存在']);
+        } catch (CustomException $exception) {
+            throw new CustomException(['message' => $exception->getMessage()]);
         }
     }
 
@@ -1068,6 +1073,9 @@ class PictureService extends BaseApiService
     public function flow_collect($params): JsonResponse
     {
         try {
+            if ($params['pictureId'] != $params['year'] . $params['issue'] . $params['pictureTypeId']) {
+                throw new CustomException(['message' => 'pictureId不正确']);
+            }
             // 先判断该pictureId在详情表中是否存在
             $isExists = DB::table('pic_details')
                 ->where('pictureId', $params['pictureId'])
@@ -1088,6 +1096,8 @@ class PictureService extends BaseApiService
             return $this->collect($params);
         } catch (ModelNotFoundException $exception) {
             throw new CustomException(['message' => 'pictureId不存在']);
+        } catch (CustomException $exception) {
+            throw new CustomException(['message' => $exception->getMessage()]);
         }
     }
 
