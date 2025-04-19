@@ -51,7 +51,7 @@ class IndexGuess extends Command
     {
         $year = date('Y');
         $latestPeriods = $this->getLatestPeriods(); // 批量获取最新期数
-
+        dd($latestPeriods);
         foreach (self::LOTTERY_TYPES as $lottery) {
             $this->processLottery($lottery, $year, $latestPeriods[$lottery] ?? null);
         }
@@ -90,6 +90,7 @@ class IndexGuess extends Command
     private function getLatestPeriods(): array
     {
         return DB::table('index_guesses')
+            ->where('year', date('Y'))
             ->whereIn('lotteryType', self::LOTTERY_TYPES)
             ->select('lotteryType', DB::raw('MAX(period) as latest_period'))
             ->groupBy('lotteryType')
