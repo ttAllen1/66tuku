@@ -66,13 +66,13 @@ class IndexGuess extends Command
             $rdsData = $this->getRedisDataWithRetry($lottery);
             $nextIssue = $rdsData['next_issue'] ?? null;
 
-            if (!$nextIssue || $latestPeriod === $nextIssue || in_array($rdsData['current_te_num'], ["后", "快", "步", "宾", "00"])) {
+            if (!$nextIssue || $latestPeriod === $nextIssue) {
                 return;
             }
-
-            $this->updateExistingRecords($lottery, $year, $nextIssue, $rdsData['current_te_num']);
-            $this->insertNewGuess($lottery, $year, $nextIssue);
-
+            if (!in_array($rdsData['current_te_num'], ["后", "快", "步", "宾", "00"])) {
+                $this->updateExistingRecords($lottery, $year, $nextIssue, $rdsData['current_te_num']);
+                $this->insertNewGuess($lottery, $year, $nextIssue);
+            }
         } catch (\Throwable $e) {
             Log::error("彩票类型 {$lottery} 处理失败: " . $e->getMessage());
         }
@@ -123,12 +123,14 @@ class IndexGuess extends Command
      */
     private function updateExistingRecords(int $lottery, string $year, string $nextIssue, string $teNum): void
     {
-        DB::table('index_guesses')
-            ->where('lotteryType', $lottery)
-            ->where('year', $year)
-            ->where('period', '<', $nextIssue)
-            ->limit(1)
-            ->update(['te_num' => $teNum]);
+        DB::transaction(function () use ($lottery, $year, $nextIssue, $teNum) {
+            DB::table('index_guesses')
+                ->where('lotteryType', $lottery)
+                ->where('year', $year)
+                ->where('period', '<', $nextIssue)
+                ->limit(1)
+                ->update(['te_num' => $teNum]);
+        });
     }
 
     /**
