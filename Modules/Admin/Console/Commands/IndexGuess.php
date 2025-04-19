@@ -123,12 +123,18 @@ class IndexGuess extends Command
     private function updateExistingRecords(int $lottery, string $year, string $nextIssue, string $teNum): void
     {
         DB::transaction(function () use ($lottery, $year, $nextIssue, $teNum) {
-            DB::table('index_guesses')
+            $record = DB::table('index_guesses')
                 ->where('lotteryType', $lottery)
                 ->where('year', $year)
                 ->where('period', '<', $nextIssue)
-                ->limit(1)
-                ->update(['te_num' => $teNum]);
+                ->orderBy('period', 'desc') // 或 asc，取最接近的一期
+                ->first();
+
+            if ($record) {
+                DB::table('index_guesses')
+                    ->where('id', $record->id)
+                    ->update(['te_num' => $teNum]);
+            }
         });
     }
 
