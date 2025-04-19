@@ -51,7 +51,6 @@ class IndexGuess extends Command
     {
         $year = date('Y');
         $latestPeriods = $this->getLatestPeriods(); // 批量获取最新期数
-        dd($latestPeriods);
         foreach (self::LOTTERY_TYPES as $lottery) {
             $this->processLottery($lottery, $year, $latestPeriods[$lottery] ?? null);
         }
