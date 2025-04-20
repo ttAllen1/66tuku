@@ -362,9 +362,9 @@ class HistoryService extends BaseApiService
                     $query->where('is_add', '<>', 0);
                 })
                 ->when($lotteryType==1, function($query) {
-                    $query->where('color', 2);
+                    $query->where('color', 2)->orWhere('is_add', '>=', 1);
                 })
-                ->orWhere('pictureTypeId', 33344)
+//                ->orWhere('pictureTypeId', 33344)
                 ->where('year', $year)->where('lotteryType', $lotteryType)->select(['max_issue', 'issues']);
             $firstModel = $res->firstOrFail();
             $issuesArr = [];
@@ -387,9 +387,9 @@ class HistoryService extends BaseApiService
                         $query->where('is_add', '<>', 0);
                     })
                     ->when($lotteryType==1, function($query) {
-                        $query->where('color', 2);
+                        $query->where('color', 2)->orWhere('is_add', '>=', 1);
                     })
-                    ->orWhere('pictureTypeId', 33344)
+//                    ->orWhere('pictureTypeId', 33344)
                     ->where('year', $year)
                     ->where('lotteryType', $lotteryType)
                     ->update([
@@ -408,9 +408,9 @@ class HistoryService extends BaseApiService
                         $query->where('is_add', '<>', 0);
                     })
                     ->when($lotteryType==1, function($query) {
-                        $query->where('color', 2);
+                        $query->where('color', 2)->orWhere('is_add', '>=', 1);
                     })
-                    ->orWhere('pictureTypeId', 33344)
+//                    ->orWhere('pictureTypeId', 33344)
                     ->where('year', $year)
                     ->where('lotteryType', $lotteryType)
                     ->update([
