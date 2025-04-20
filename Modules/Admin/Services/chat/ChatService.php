@@ -183,7 +183,7 @@ class ChatService extends BaseApiService
     {
         $res = Redis::get('chat_smart');
         if (!$res) {
-            return $this->apiError('没有数据');
+            return $this->apiSuccess();
         }
         return $this->apiSuccess('', json_decode($res, true));
     }
