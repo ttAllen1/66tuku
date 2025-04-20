@@ -24,7 +24,7 @@ class DiscussRequest extends FormRequest
             'id'                => "required|is_positive_integer",
             'title'             => 'required',
             'content'           => 'required',
-            'word_color'        => 'required',
+            'word_color'        => 'nullable|string',
             'lotteryType'       => "required|".Rule::in([0, 1, 2, 3, 4, 5, 6, 7]),
             'type'              => "required|".Rule::in([1, 2]),
             'cate'              => "required|".Rule::in([1, 2]),
