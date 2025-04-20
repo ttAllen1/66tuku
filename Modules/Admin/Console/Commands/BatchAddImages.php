@@ -35,7 +35,6 @@ class BatchAddImages extends Command
 
     public function handle()
     {
-        return ;
         try{
             DB::BeginTransaction();
             $existLotteryTypeIds = LotteryTypeId::query()
