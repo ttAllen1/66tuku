@@ -52,6 +52,7 @@ class ChatController extends BaseApiController
     /**
      * 智能配置数据
      * @return JsonResponse
+     * @throws ApiException
      */
     public function chat_smart_list(): JsonResponse
     {
