@@ -353,7 +353,7 @@ Route::group(["prefix"=>"v1", "middleware"=>["GlobalMiddleware"]],function (){
 
         // 高手论坛
         Route::get('discuss/list', 'v1\DiscussController@list');  // 列表
-        Route::get('discuss/three_create', 'v1\DiscussController@three_create');  // 同步49
+        Route::post('discuss/three_create', 'v1\DiscussController@three_create');  // 同步49
         Route::get('discuss/detail', 'v1\DiscussController@detail');  // 主题详情
 
         Route::get('expert/list', 'v1\ExpertController@list');  // 列表
