@@ -205,6 +205,9 @@ Route::group(["prefix"=>"v1/admin","middleware"=>["AdminApiAuth", "CorsMiddlewar
     // 资料设置
     Route::get('material/list', 'v1\DiscussController@list');
     Route::post('material/update_is_index', 'v1\DiscussController@update_is_index');
+    // 智能设置
+    Route::get('discuss_robot/configs', 'v1\DiscussController@configs');
+    Route::post('discuss_robot/update_is_index', 'v1\DiscussController@update_is_index');
 
     /***********************************图库管理（图解列表）***************************************/
     Route::get('picture/diagrams_list', 'v1\PictureController@diagrams_list');

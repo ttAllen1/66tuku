@@ -9,6 +9,7 @@ use Modules\Admin\Console\Commands\AmIndexPic;
 use Modules\Admin\Console\Commands\AmYearPic;
 use Modules\Admin\Console\Commands\AutoVote;
 use Modules\Admin\Console\Commands\AutoXgAmMaxIssues;
+use Modules\Admin\Console\Commands\BatchAddImages;
 use Modules\Admin\Console\Commands\CacheIndexPic;
 use Modules\Admin\Console\Commands\CheckTransfer;
 use Modules\Admin\Console\Commands\ClearCorpusDomain;
@@ -139,7 +140,8 @@ class Kernel extends ConsoleKernel
         XgAI::class,
         IndexGuess::class,
         AutoXgAmMaxIssues::class,
-        SpiderXgBlackImg::class
+        SpiderXgBlackImg::class,
+        BatchAddImages::class
     ];
 
     /**
