@@ -177,10 +177,14 @@ class ChatService extends BaseApiService
     /**
      * 保存智能配置
      * @return JsonResponse
+     * @throws ApiException
      */
     public function chat_smart_list(): JsonResponse
     {
         $res = Redis::get('chat_smart');
+        if (!$res) {
+            return $this->apiError('没有数据');
+        }
         return $this->apiSuccess('', json_decode($res, true));
     }
 
