@@ -95,19 +95,41 @@ class DiscussService extends BaseApiService
     {
         $year = date('Y');
 //        $year = 2025;
-        $userId = auth('user')->id();
-        $maxTime = DB::table('discusses')->where('user_id', $userId)->max('created_at');
-        if ($maxTime && strtotime($maxTime) + 30 > time()) {
-            throw new CustomException(['message'=>'30秒后发布']);
-        }
-        $nextIssue = (int)$this->getNextIssue($params['lotteryType']);
-        if ($nextIssue!=Redis::get('lottery_real_open_issue_'.$params['lotteryType'])) {
-            try {
-                (new HistoryService())->update_year_issue($params['lotteryType']);
-            } catch (CustomException $e) {
-
+        $params['is_49'] = $params['is_49'] ?? 0;
+        $params['user_id_49'] = $params['user_id_49'] ?? 0;
+        if ($params['is_49'] == 1) {
+            $userId = DB::table('discusses')
+                ->where('is_49', 1)
+                ->where('user_id_49', $params['user_id_49'])
+                ->where('year', $year)
+                ->where('lotteryType', $params['lotteryType'])
+                ->value('user_id');
+            if (!$userId) {
+                $userId = DB::table('users')
+                    ->whereIn('system', [1, 2])
+                    ->orWhere('is_chat', 1)
+                    ->inRandomOrder()
+                    ->value('id');
+            }
+        } else {
+            $userId = auth('user')->id();
+            $maxTime = DB::table('discusses')->where('user_id', $userId)->max('created_at');
+            if ($maxTime && strtotime($maxTime) + 30 > time()) {
+                throw new CustomException(['message'=>'30秒后发布']);
             }
         }
+
+        $nextIssue = (int)$this->getNextIssue($params['lotteryType']);
+        if ($params['is_49'] == 0) {
+            if ($nextIssue!=Redis::get('lottery_real_open_issue_'.$params['lotteryType'])) {
+                try {
+                    (new HistoryService())->update_year_issue($params['lotteryType']);
+                } catch (CustomException $e) {
+
+                }
+            }
+        }
+
         try {
             DB::beginTransaction();
             $checkStatus = $this->getCheckStatus(10);
@@ -119,9 +141,11 @@ class DiscussService extends BaseApiService
                 'word_color'  => strip_tags($params['word_color']),
                 'issue'       => $nextIssue,
                 'year'        => $year,
+                'is_49'        => $params['is_49'],
+                'user_id_49'   => $params['user_id_49'],
                 'status'      => $checkStatus == 1 ? 0 : 1
             ]);
-            if (!empty($params['images'])) {
+            if (!empty($params['images']) && $params['is_49'] == 0) {
                 $images = [];
                 if (!is_array($params['images'])) {
                     $params['images'] = [$params['images']];
@@ -138,12 +162,15 @@ class DiscussService extends BaseApiService
                 }
                 $discuss->images()->createMany($images);
             }
-            // 加成长值
-            (new UserGrowthScoreService())->growthScore($this->_grow['create_post']);
-            // 加发布数
-            User::where('id', $userId)->increment('releases');
-            // 加集五福进度
-            $this->joinActivities(4);
+            if ($params['is_49'] == 0) {
+                // 加成长值
+                (new UserGrowthScoreService())->growthScore($this->_grow['create_post']);
+                // 加发布数
+                User::where('id', $userId)->increment('releases');
+                // 加集五福进度
+                $this->joinActivities(4);
+            }
+
             DB::commit();
         } catch (\Exception $exception) {
             DB::rollBack();

@@ -44,6 +44,15 @@ class DiscussController extends BaseApiController
         return (new DiscussService())->create($request->only(['lotteryType', 'title', 'content', 'year', 'word_color', 'images']));
     }
 
+    public function three_create(DiscussRequest $request)
+    {
+        $request->validate('create');
+        $params = $request->only(['lotteryType', 'title', 'content', 'year', 'word_color', 'images', 'user_id_49']);
+        $params['is_49'] = 1;
+        return (new DiscussService())->create($params);
+    }
+
+
     /**
      * 详情
      * @param DiscussRequest $request
