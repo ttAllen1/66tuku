@@ -129,7 +129,6 @@ class DiscussService extends BaseApiService
                 }
             }
         }
-
         try {
             DB::beginTransaction();
             $checkStatus = $this->getCheckStatus(10);
