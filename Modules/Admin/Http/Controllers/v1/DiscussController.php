@@ -8,6 +8,7 @@ namespace Modules\Admin\Http\Controllers\v1;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Modules\Admin\Http\Requests\CommonPageRequest;
 use Modules\Admin\Services\discuss\DiscussService;
 use Modules\Common\Exceptions\CustomException;
@@ -92,32 +93,50 @@ class DiscussController extends BaseApiController
 //          【武将】牛、马、虎、蛇、猴、狗
 //          男肖：鼠牛虎龙马猴狗
 //          女肖：兔蛇羊鸡猪
+        $userIds = DB::table('users')
+            ->whereIn('system', [1, 2])
+            ->orWhere('is_chat', 1)
+            ->pluck('id')->toArray();
+        dd($userIds);
         $type = [
             'dan-shuang'     => [
                 [
                     'title' => '单双中特',
-                    'num'   => 12,
+                    'sub_title' => '单数',
+                    'num'   => 0,
                     'color' => '#FF0000'
                 ],
                 [
-                    'title' => '单双24码',
-                    'num'   => 12,
-                    'color' => '#00FF00'
+                    'title' => '单双中特',
+                    'sub_title' => '双数',
+                    'num'   => 0,
+                    'color' => '#FF0000'
                 ]
             ],
             'da-xiao'        => [
                 [
-                    'title' => '特码大小',
+                    'title' => '大小中特',
+                    'sub_title' => '特码大',
+                    'num'   => 0,
+                    'color' => '#FF0000'
+                ],
+                [
+                    'title' => '大小中特',
+                    'sub_title' => '特码小',
+                    'num'   => 0,
+                    'color' => '#FF0000'
                 ]
             ],
             'bo-se'          => [
                 [
-                    'title' => '一波中特',
+                    'title' => '波色中特',
+                    'sub_title' => '一波中特',
                     'num'   => 1,
                     'color' => '#800080'
                 ],
                 [
-                    'title' => '双波中特',
+                    'title' => '波色中特',
+                    'sub_title' => '双波中特',
                     'num'   => 2,
                     'color' => '#808080'
                 ],
@@ -207,5 +226,7 @@ class DiscussController extends BaseApiController
                 ]
             ],
         ];
+
+
     }
 }
