@@ -102,7 +102,7 @@ class DiscoveryService extends BaseApiService
                 // 下载49图片
                 $imageInfoArr = [];
                 foreach ($params['images'] as $k => $v) {
-                    $imageInfoArr[$k] = (new PictureService())->downloadRemoteImage(config('config.49_full_srv_img_prefix') .$v);
+                    $imageInfoArr[$k] = (new PictureService())->downloadRemoteImage($v);
                 }
                 Log::info('imageInfoArr: '. json_encode($imageInfoArr));
                 if ($imageInfoArr) {
