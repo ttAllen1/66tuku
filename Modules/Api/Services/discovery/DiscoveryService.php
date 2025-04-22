@@ -36,7 +36,7 @@ class DiscoveryService extends BaseApiService
     {
         $params['is_49'] = $params['is_49'] ?? 0;
         $params['user_id_49'] = $params['user_id_49'] ?? 0;
-//        dd($params);
+        dd($params);
 
 
 //        $maxTime = DB::table('user_discoveries')->where('user_id', $user_id)->max('created_at');
