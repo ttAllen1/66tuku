@@ -36,7 +36,7 @@ class DiscoveryService extends BaseApiService
     {
         $params['is_49'] = $params['is_49'] ?? 0;
         $params['user_id_49'] = $params['user_id_49'] ?? 0;
-        dd($params);
+//        dd($params);
 
 
 //        $maxTime = DB::table('user_discoveries')->where('user_id', $user_id)->max('created_at');
@@ -45,9 +45,9 @@ class DiscoveryService extends BaseApiService
 //        }
 
         try {
-            Log::info('imageInfoArr: '. json_encode($params));
+//            Log::info('imageInfoArr: '. json_encode($params));
             if ($params['is_49'] == 1) {
-                $user_id = DB::table('discusses')
+                $user_id = DB::table('user_discoveries')
                     ->where('is_49', 1)
                     ->where('user_id_49', $params['user_id_49'])
                     ->where('year', date('Y'))

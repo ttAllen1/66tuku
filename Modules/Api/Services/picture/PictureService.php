@@ -1197,6 +1197,7 @@ class PictureService extends BaseApiService
      */
     public function downloadRemoteImage(string $url): string
     {
+//        dd($url);
         // 1. 验证 URL
         if (! Str::startsWith($url, ['http://', 'https://'])) {
             throw new CustomException(['message' => '无效的图片 URL']);
@@ -1204,6 +1205,7 @@ class PictureService extends BaseApiService
 
         // 2. 解析 URL 路径，保留 upload/... 部分
         $parsed = parse_url($url);
+
         if (empty($parsed['path'])) {
             throw new CustomException(['message' => 'URL 路径解析失败']);
         }
@@ -1212,9 +1214,11 @@ class PictureService extends BaseApiService
 
         // 3. 本地目标路径（项目根目录下）
         $localPath = base_path($relativePath);
+        $localPath = public_path($relativePath);
 
         // 4. 确保目标目录存在
         $dir = dirname($localPath);
+//        dd($parsed, $relativePath, base_path($relativePath), $dir);
         if (! file_exists($dir)) {
             Log::error("url: {$url} 本地目录不存在: {$dir}");
             if (! mkdir($dir, 0755, true) && ! is_dir($dir)) {
