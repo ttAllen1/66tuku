@@ -1189,6 +1189,54 @@ class PictureService extends BaseApiService
     }
 
     /**
+     * 将远程图片下载到本地，并保持目录结构与文件名不变
+     *
+     * @param string $url  远程图片完整 URL
+     * @return string      本地保存的文件绝对路径
+     * @throws CustomException 下载失败或路径错误时抛出异常
+     */
+    public function downloadRemoteImage(string $url): string
+    {
+        // 1. 验证 URL
+        if (! Str::startsWith($url, ['http://', 'https://'])) {
+            throw new CustomException(['message' => '无效的图片 URL']);
+        }
+
+        // 2. 解析 URL 路径，保留 upload/... 部分
+        $parsed = parse_url($url);
+        if (empty($parsed['path'])) {
+            throw new CustomException(['message' => 'URL 路径解析失败']);
+        }
+        // 去掉开头的斜杠
+        $relativePath = ltrim($parsed['path'], '/');
+
+        // 3. 本地目标路径（项目根目录下）
+        $localPath = base_path($relativePath);
+
+        // 4. 确保目标目录存在
+        $dir = dirname($localPath);
+        if (! file_exists($dir)) {
+            if (! mkdir($dir, 0755, true) && ! is_dir($dir)) {
+                throw new CustomException(['message' => '创建目录失败: ' . $dir]);
+            }
+        }
+
+        // 5. 发起 HTTP 请求下载图片
+        try {
+            $response = Http::timeout(10)->get($url);
+            if ($response->failed() || empty($response->body())) {
+                throw new \Exception('请求失败或内容为空，HTTP 状态码：' . $response->status());
+            }
+            // 6. 将图片写入本地文件（覆盖或新建）
+            file_put_contents($localPath, $response->body());
+        } catch (\Exception $e) {
+            throw new CustomException(['message' => '下载图片失败: ' . $e->getMessage()]);
+        }
+
+        return $localPath;
+    }
+
+    /**
      * 根据服务器上图片的地址获取图片信息
      * 图片路径不能以http https 或者 // 开头
      * @param string $img_url
@@ -1239,7 +1287,7 @@ class PictureService extends BaseApiService
 //                    $font->align('center');
 //                    $font->valign('middle');
 //                });
-                $text = '949tk.com';
+                $text = '66tk.com';
                 // 获取随机角度
                 $angle = random_int(0, 90);
                 // 生成随机颜色

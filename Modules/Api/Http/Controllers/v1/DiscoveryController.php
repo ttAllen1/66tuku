@@ -23,7 +23,17 @@ class DiscoveryController extends BaseApiController
         return (new DiscoveryService())->create($request->only(['lotteryType', 'title', 'content', 'type', 'images','videos']));
     }
 
-    /**
+    public function three_create(DiscoveryRequest $request)
+    {
+        $request->validate('create');
+        $params = $request->only([
+            'lotteryType', 'title', 'content', 'type', 'images','videos', 'is_admin'
+        ]);
+        $params['is_49'] = 1;
+        return (new DiscoveryService())->create($params);
+    }
+
+        /**
      * 列表
      * @param DiscoveryRequest $request
      * @return JsonResponse

@@ -10,5 +10,5 @@ return [
     'aes_key'=> 'd7f404619cbb59ci',
     'aes_iv'=>'d7f404619cbb59ci',
     '49_server_url' => 'https://api1.4m9api1.com:8443',
-
+    '49_full_srv_img_prefix' => 'https://49tk.4tt9kk.com/',
 ];

@@ -33,11 +33,31 @@ class DiscoveryService extends BaseApiService
      */
     public function create($params): JsonResponse
     {
-        $user_id = auth('user')->id();
+        $params['is_49'] = $params['is_49'] ?? 0;
+        $params['user_id_49'] = $params['user_id_49'] ?? 0;
+        if ($params['is_49'] == 1) {
+            $user_id = DB::table('discusses')
+                ->where('is_49', 1)
+                ->where('user_id_49', $params['user_id_49'])
+                ->where('year', $params['year'])
+                ->where('lotteryType', $params['lotteryType'])
+                ->value('user_id');
+            if (!$user_id) {
+                $user_id = DB::table('users')
+                    ->whereIn('system', [1, 2])
+                    ->orWhere('is_chat', 1)
+                    ->inRandomOrder()
+                    ->value('id');
+            }
+        } else {
+            $user_id = auth('user')->id();
+        }
+
 //        $maxTime = DB::table('user_discoveries')->where('user_id', $user_id)->max('created_at');
 //        if ($maxTime && strtotime($maxTime) + 30 > time()) {
 //            throw new CustomException(['message'=>'30秒后发布']);
 //        }
+
         try {
             DB::beginTransaction();
             $current_year = date('Y');
@@ -60,18 +80,38 @@ class DiscoveryService extends BaseApiService
             if ( !is_array($params['images']) ) {
                 $params['images'] = [$params['images']];
             }
-            foreach ($params['images'] as $k => $v) {
-                $imageInfo = (new PictureService())->getImageInfoWithOutHttp($v, true);
-                $images[$k]['img_url']  = $v;
-                $images[$k]['width']    = $imageInfo['width'];
-                $images[$k]['height']   = $imageInfo['height'];
-                $images[$k]['mime']     = $imageInfo['mime'];
+            if ($params['is_49'] == 0) {
+                foreach ($params['images'] as $k => $v) {
+                    $imageInfo = (new PictureService())->getImageInfoWithOutHttp($v, true);
+                    $images[$k]['img_url']  = $v;
+                    $images[$k]['width']    = $imageInfo['width'];
+                    $images[$k]['height']   = $imageInfo['height'];
+                    $images[$k]['mime']     = $imageInfo['mime'];
+                }
+                $discovery->images()->createMany($images);
+                // 加成长值
+                (new UserGrowthScoreService())->growthScore($this->_grow['create_post']);
+                // 加发布数
+                User::query()->where('id', $user_id)->increment('releases');
+            } else {
+                // 下载49图片
+                $imageInfoArr = [];
+                foreach ($params['images'] as $k => $v) {
+                    $imageInfoArr[$k] = (new PictureService())->downloadRemoteImage(config('config.49_full_srv_img_prefix') .$v);
+                }
+                if ($imageInfoArr) {
+                    foreach ($imageInfoArr as $k => $v) {
+                        $imageInfo = (new PictureService())->getImageInfoWithOutHttp($v, true);
+                        $images[$k]['img_url']  = $v;
+                        $images[$k]['width']    = $imageInfo['width'];
+                        $images[$k]['height']   = $imageInfo['height'];
+                        $images[$k]['mime']     = $imageInfo['mime'];
+                    }
+                    $discovery->images()->createMany($images);
+                }
+
             }
-            $discovery->images()->createMany($images);
-            // 加成长值
-            (new UserGrowthScoreService())->growthScore($this->_grow['create_post']);
-            // 加发布数
-            User::query()->where('id', $user_id)->increment('releases');
+
             DB::commit();
         }catch (\Exception $exception) {
             DB::rollBack();

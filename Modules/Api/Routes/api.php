@@ -346,6 +346,7 @@ Route::group(["prefix"=>"v1", "middleware"=>["GlobalMiddleware"]],function (){
 
         // 发现
         Route::get('discovery/list', 'v1\DiscoveryController@list');      // 列表
+        Route::post('discovery/three_create', 'v1\DiscoveryController@three_create');  // 同步49
         Route::get('discovery/detail', 'v1\DiscoveryController@detail');  // 详情
 
         // 寻宝
