@@ -77,7 +77,7 @@ class DiscoveryService extends BaseApiService
                     'title'         => strip_tags($params['title']),
                     'content'       => strip_tags($params['content']),
                     'type'          => $params['type'],
-                    'videos'        => $params['videos'] ? strip_tags($params['videos']) : '',
+                    'videos'        => !empty($params['videos']) ? strip_tags($params['videos']) : '',
                     'status'        => $checkStatus==1 ? 0 : 1
                 ]);
 
