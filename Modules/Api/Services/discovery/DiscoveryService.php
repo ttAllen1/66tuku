@@ -36,7 +36,7 @@ class DiscoveryService extends BaseApiService
     {
         $params['is_49'] = $params['is_49'] ?? 0;
         $params['user_id_49'] = $params['user_id_49'] ?? 0;
-        dd($params);
+//        dd($params);
         if ($params['is_49'] == 1) {
             $user_id = DB::table('discusses')
                 ->where('is_49', 1)
