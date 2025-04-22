@@ -5,6 +5,7 @@ namespace Modules\Api\Services\discovery;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Modules\Api\Models\HistoryNumber;
 use Modules\Api\Models\User;
 use Modules\Api\Models\UserDiscovery;
@@ -115,6 +116,7 @@ class DiscoveryService extends BaseApiService
             DB::commit();
         }catch (\Exception $exception) {
             DB::rollBack();
+            Log::error('DiscoveryService create error: '. $exception->getMessage() . ' in '. $exception->getFile(). ':'. $exception->getLine());
             throw new CustomException(['message'=>$exception->getMessage(), $exception->getFile(), $exception->getLine()]);
         }
 
