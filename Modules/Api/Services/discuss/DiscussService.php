@@ -97,6 +97,7 @@ class DiscussService extends BaseApiService
 //        $year = 2025;
         $params['is_49'] = $params['is_49'] ?? 0;
         $params['user_id_49'] = $params['user_id_49'] ?? 0;
+        $isAdmin = $params['is_admin'] ?? 0;
         if ($params['is_49'] == 1) {
             $userId = DB::table('discusses')
                 ->where('is_49', 1)
@@ -135,9 +136,9 @@ class DiscussService extends BaseApiService
             $discuss = Discuss::query()->create([
                 'user_id'     => $userId,
                 'lotteryType' => $params['lotteryType'],
-                'title'       => strip_tags($params['title']),
-                'content'     => strip_tags($params['content']),
-                'word_color'  => strip_tags($params['word_color']),
+                'title'       => $isAdmin == 0 ? strip_tags($params['title']) : $params['title'],
+                'content'     => $isAdmin == 0 ? strip_tags($params['content']) : $params['content'],
+                'word_color'  => $isAdmin == 0? strip_tags($params['word_color']) : $params['word_color'],
                 'issue'       => $nextIssue,
                 'year'        => $year,
                 'is_49'        => $params['is_49'],
