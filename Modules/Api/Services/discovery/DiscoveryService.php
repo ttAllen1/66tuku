@@ -60,6 +60,7 @@ class DiscoveryService extends BaseApiService
 //        }
 
         try {
+            Log::info('imageInfoArr: '. json_encode($params));
             DB::beginTransaction();
             $current_year = date('Y');
             $checkStatus = $this->getCheckStatus(8);
