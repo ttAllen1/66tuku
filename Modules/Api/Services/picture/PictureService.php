@@ -1200,7 +1200,7 @@ class PictureService extends BaseApiService
 //        dd($url);
         // 1. 验证 URL
         if (! Str::startsWith($url, ['http://', 'https://'])) {
-            throw new CustomException(['message' => '无效的图片 URL']);
+            throw new CustomException(['message' => '无效的图片 URL-' . $url]);
         }
 
         // 2. 解析 URL 路径，保留 upload/... 部分
