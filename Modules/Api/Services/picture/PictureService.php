@@ -1216,7 +1216,7 @@ class PictureService extends BaseApiService
         // 4. 确保目标目录存在
         $dir = dirname($localPath);
         if (! file_exists($dir)) {
-            dd($dir);
+            Log::error("url: {$url} 本地目录不存在: {$dir}");
             if (! mkdir($dir, 0755, true) && ! is_dir($dir)) {
 
                 throw new CustomException(['message' => '创建目录失败: ' . $dir]);
