@@ -5,6 +5,7 @@ namespace Modules\Api\Services\discuss;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use Modules\Admin\Services\lottery\HistoryService;
 use Modules\Api\Models\Discuss;
@@ -98,7 +99,6 @@ class DiscussService extends BaseApiService
         $params['is_49'] = $params['is_49'] ?? 0;
         $params['user_id_49'] = $params['user_id_49'] ?? 0;
         $isAdmin = $params['is_admin'] ?? 0;
-        dd($isAdmin, $params);
         if ($params['is_49'] == 1) {
             $userId = DB::table('discusses')
                 ->where('is_49', 1)
@@ -175,6 +175,7 @@ class DiscussService extends BaseApiService
             DB::commit();
         } catch (\Exception $exception) {
             DB::rollBack();
+            Log::error("创建帖子失败：" . $exception->getMessage() . ' ' .$exception->getLine());
             throw new CustomException(['message' => $exception->getMessage()]);
         }
 
