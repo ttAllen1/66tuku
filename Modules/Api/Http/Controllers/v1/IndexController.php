@@ -78,4 +78,9 @@ class IndexController extends BaseApiController
     {
         return (new IndexService())->guess($request->only('lotteryType'));
     }
+
+    public function guess1()
+    {
+        return (new IndexService())->guess1();
+    }
 }

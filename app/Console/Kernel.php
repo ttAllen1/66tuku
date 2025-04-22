@@ -7,6 +7,7 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Bus;
 use Modules\Admin\Console\Commands\AmIndexPic;
 use Modules\Admin\Console\Commands\AmYearPic;
+use Modules\Admin\Console\Commands\AutoPutDiscuss;
 use Modules\Admin\Console\Commands\AutoVote;
 use Modules\Admin\Console\Commands\AutoXgAmMaxIssues;
 use Modules\Admin\Console\Commands\BatchAddImages;
@@ -141,7 +142,8 @@ class Kernel extends ConsoleKernel
         IndexGuess::class,
         AutoXgAmMaxIssues::class,
         SpiderXgBlackImg::class,
-        BatchAddImages::class
+        BatchAddImages::class,
+        AutoPutDiscuss::class
     ];
 
     /**

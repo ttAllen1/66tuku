@@ -187,4 +187,5 @@ class DiscussService extends BaseApiService
         return $this->commonUpdate(CorpusType::query(),$id,$params);
     }
 
+
 }
