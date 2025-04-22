@@ -1218,7 +1218,7 @@ class PictureService extends BaseApiService
 
         // 4. 确保目标目录存在
         $dir = dirname($localPath);
-//        dd($parsed, $relativePath, base_path($relativePath), $dir);
+//        dd($parsed, $relativePath, base_path($relativePath), $dir, $localPath);
         if (! file_exists($dir)) {
             Log::error("url: {$url} 本地目录不存在: {$dir}");
             if (! mkdir($dir, 0755, true) && ! is_dir($dir)) {
@@ -1239,7 +1239,7 @@ class PictureService extends BaseApiService
             throw new CustomException(['message' => '下载图片失败: ' . $e->getMessage()]);
         }
 
-        return $localPath;
+        return $relativePath;
     }
 
     /**
