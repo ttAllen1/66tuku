@@ -45,6 +45,7 @@ class DiscoveryService extends BaseApiService
 //        }
 
         try {
+            Log::info('imageInfoArr: '. json_encode($params));
             if ($params['is_49'] == 1) {
                 $user_id = DB::table('discusses')
                     ->where('is_49', 1)
@@ -62,7 +63,7 @@ class DiscoveryService extends BaseApiService
             } else {
                 $user_id = auth('user')->id();
             }
-            Log::info('imageInfoArr: '. json_encode($params));
+
             DB::beginTransaction();
             $current_year = date('Y');
             $checkStatus = $this->getCheckStatus(8);
