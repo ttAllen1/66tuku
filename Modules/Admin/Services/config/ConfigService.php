@@ -147,9 +147,12 @@ class ConfigService extends BaseApiService
 //            dd($data);
             $result = $this->commonUpdate(AuthConfig::query(), 1, $data);
             if ($result) {
-                file_put_contents('config.js', "var baseConfigs='" . json_encode(\Modules\Api\Models\AuthConfig::getinfo()) . "';");
+//                file_put_contents('config.js', "var baseConfigs='" . json_encode(\Modules\Api\Models\AuthConfig::getinfo()) . "';");
 //                (new BaseService())->ALiOssWith($data['config_js'], 'configs', 'config.js', '66tuku-config');
 //                (new BaseService())->ALiOssWith($data['config_add_js'], 'configs', 'configAdd.js', '66tuku-config');
+                $data['config_js'] = str_replace('googleterager', '', $data['config_js']);
+                $data['config_add_js'] = str_replace('googleterager', '', $data['config_add_js']);
+                $data['config_lottery_js'] = str_replace('googleterager', '', $data['config_lottery_js']);
                 (new BaseService())->Upload2S3($data['config_js'], 'configs', 'config.js');
                 (new BaseService())->Upload2S3($data['config_add_js'], 'configs', 'configAdd.js');
                 (new BaseService())->Upload2S3($data['config_lottery_js'], 'configs', 'configLottery.js');
