@@ -137,7 +137,7 @@ class DiscussService extends BaseApiService
                 'user_id'     => $userId,
                 'lotteryType' => $params['lotteryType'],
                 'title'       => $isAdmin == 0 ? strip_tags($params['title']) : $params['title'],
-                'content'     => $isAdmin == 0 ? strip_tags($params['content']) : $params['content'],
+                'content'     => $isAdmin == 0 ? strip_tags($params['content']) : str_replace(PHP_EOL, '', $params['content']),
                 'word_color'  => $isAdmin == 0? strip_tags($params['word_color']) : $params['word_color'],
                 'issue'       => $nextIssue,
                 'year'        => $year,
