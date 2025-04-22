@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Modules\Admin\Models\YearPic;
+use Modules\Common\Services\BaseService;
 use Swoole\Process;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -319,7 +320,7 @@ class AutoPutDiscuss extends Command
         $date = date('Y-m-d H:i:s');
         foreach ($lotteryTypes as $lotteryType) {
             // 计算当前期和上一期
-            $nextIssue = (int)$this->getNextIssue($lotteryType);
+            $nextIssue = (int)(new BaseService())->getNextIssue($lotteryType);
             $lastIssue = $nextIssue - 1;
 
             // 1. 从数据库读取上一期的 te_attr JSON
