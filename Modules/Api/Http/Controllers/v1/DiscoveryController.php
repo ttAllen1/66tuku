@@ -27,7 +27,7 @@ class DiscoveryController extends BaseApiController
     {
         $request->validate('create');
         $params = $request->only([
-            'lotteryType', 'title', 'content', 'type', 'images','videos', 'is_admin'
+            'lotteryType', 'title', 'content', 'type', 'images','videos', 'is_admin', 'user_id_49'
         ]);
         $params['is_49'] = 1;
         return (new DiscoveryService())->create($params);
