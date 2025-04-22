@@ -98,6 +98,7 @@ class DiscussService extends BaseApiService
         $params['is_49'] = $params['is_49'] ?? 0;
         $params['user_id_49'] = $params['user_id_49'] ?? 0;
         $isAdmin = $params['is_admin'] ?? 0;
+        dd($isAdmin);
         if ($params['is_49'] == 1) {
             $userId = DB::table('discusses')
                 ->where('is_49', 1)
