@@ -1189,6 +1189,38 @@ class PictureService extends BaseApiService
     }
 
     /**
+     * 在图片路径的文件名部分添加指定后缀
+     *
+     * 类比：就像你给原本贴着“工资单.pdf”的文件
+     * 再粘一张标签“_原始”变成“工资单_原始.pdf”，
+     * 这样既保留了原文件，也能直观区分哪些是带水印、哪些是原图。
+     *
+     * @param string $relativePath  以 upload/... 开头的相对路径
+     * @param string $suffix        要插入的后缀，例如 '_nowater'
+     * @return string               处理后的新相对路径
+     */
+    protected function appendSuffixToFilename(string $relativePath, string $suffix): string
+    {
+        // 1. 用 PHP 内置 pathinfo 拆解路径
+        $info = pathinfo($relativePath);
+
+        // 2. 重组新文件名：dirname + / + filename + suffix + . + extension
+        //    例如：dirname = 'upload/images/20250422'
+        //          filename = '8vAt67EV8RSoiiiYXtzkUM8mEzXCIU89u8ts3zZ7'
+        //          suffix   = '_nowater'
+        //          extension= 'jpg'
+        //    拼出：upload/images/20250422/8vAt67EV8RSoiiiYXtzkUM8mEzXCIU89u8ts3zZ7_nowater.jpg
+        $newPath = $info['dirname']
+            . '/'
+            . $info['filename']
+            . $suffix
+            . '.'
+            . $info['extension'];
+
+        return $newPath;
+    }
+
+    /**
      * 将远程图片下载到本地，并保持目录结构与文件名不变
      *
      * @param string $url  远程图片完整 URL
@@ -1200,7 +1232,7 @@ class PictureService extends BaseApiService
 //        dd($url);
         // 1. 验证 URL
         if (! Str::startsWith($url, ['http://', 'https://'])) {
-            $url = config('config.49_full_srv_img_prefix') . $url;
+            $url = $this->appendSuffixToFilename(config('config.49_full_srv_img_prefix') . $url, '_nowater');
         }
 
         // 2. 解析 URL 路径，保留 upload/... 部分
