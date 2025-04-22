@@ -50,7 +50,7 @@ class DiscoveryService extends BaseApiService
                 $user_id = DB::table('discusses')
                     ->where('is_49', 1)
                     ->where('user_id_49', $params['user_id_49'])
-                    ->where('year', $params['year'])
+                    ->where('year', date('Y'))
                     ->where('lotteryType', $params['lotteryType'])
                     ->value('user_id');
                 if (!$user_id) {
