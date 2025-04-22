@@ -37,23 +37,7 @@ class DiscoveryService extends BaseApiService
         $params['is_49'] = $params['is_49'] ?? 0;
         $params['user_id_49'] = $params['user_id_49'] ?? 0;
 //        dd($params);
-        if ($params['is_49'] == 1) {
-            $user_id = DB::table('discusses')
-                ->where('is_49', 1)
-                ->where('user_id_49', $params['user_id_49'])
-                ->where('year', $params['year'])
-                ->where('lotteryType', $params['lotteryType'])
-                ->value('user_id');
-            if (!$user_id) {
-                $user_id = DB::table('users')
-                    ->whereIn('system', [1, 2])
-                    ->orWhere('is_chat', 1)
-                    ->inRandomOrder()
-                    ->value('id');
-            }
-        } else {
-            $user_id = auth('user')->id();
-        }
+
 
 //        $maxTime = DB::table('user_discoveries')->where('user_id', $user_id)->max('created_at');
 //        if ($maxTime && strtotime($maxTime) + 30 > time()) {
@@ -61,6 +45,23 @@ class DiscoveryService extends BaseApiService
 //        }
 
         try {
+            if ($params['is_49'] == 1) {
+                $user_id = DB::table('discusses')
+                    ->where('is_49', 1)
+                    ->where('user_id_49', $params['user_id_49'])
+                    ->where('year', $params['year'])
+                    ->where('lotteryType', $params['lotteryType'])
+                    ->value('user_id');
+                if (!$user_id) {
+                    $user_id = DB::table('users')
+                        ->whereIn('system', [1, 2])
+                        ->orWhere('is_chat', 1)
+                        ->inRandomOrder()
+                        ->value('id');
+                }
+            } else {
+                $user_id = auth('user')->id();
+            }
             Log::info('imageInfoArr: '. json_encode($params));
             DB::beginTransaction();
             $current_year = date('Y');
