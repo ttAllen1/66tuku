@@ -24,6 +24,7 @@ class DeleteEqKeyword extends Command
 
     public function handle()
     {
+        return;
         // 第一步：构造子查询，找出重复的 keyword（出现次数 >= 2）
         $duplicateKeywords = DB::table('year_pics')
             ->select('keyword')
