@@ -384,7 +384,7 @@ class HistoryService extends BaseApiService
             }
         } catch (\Exception $exception) {
             if (request()->input('ts', 0) == 1) {
-                dd($exception->getMessage());
+                dd($exception->getMessage(), $exception->getLine());
             }
             if ($exception instanceof ModelNotFoundException) {
                 return;
