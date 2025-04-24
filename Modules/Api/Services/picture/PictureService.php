@@ -330,6 +330,9 @@ class PictureService extends BaseApiService
         if (!$list) {
             return $this->apiSuccess();
         }
+        if (request()->input('ts', 0) == 1) {
+            dd($list[0]);
+        }
         $maxIssue = $list[0]['max_issue'];
         if ($maxIssue != Redis::get('lottery_real_open_issue_'.$params['lotteryType'])) {
             try {
