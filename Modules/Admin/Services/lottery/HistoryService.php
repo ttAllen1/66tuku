@@ -351,21 +351,21 @@ class HistoryService extends BaseApiService
         try{
             $year = date('Y');
 
-            $res = YearPic::query()
+            $query = YearPic::query()
                 ->where('year', $year)
                 ->where('lotteryType', $lotteryType)
                 ->orderBy('max_issue');
 
             // 根据彩种类型添加条件
             if ($lotteryType == 1) {
-                $res->where(function ($q) {
+                $query->where(function ($q) {
                     $q->where('color', 2)->orWhere('is_add', '>=', 1);
                 });
             } elseif ($lotteryType == 2) {
-                $res->where('is_add', '>', 0);
+                $query->where('is_add', '>', 0);
             }
 
-            $res = $res->select(['max_issue', 'issues'])->firstOrFail();
+            $res = $query->select(['max_issue', 'issues'])->firstOrFail();
 
             $currentMaxIssue = ltrim(Redis::get('lottery_real_open_issue_'.$lotteryType), 0);
 
@@ -380,7 +380,7 @@ class HistoryService extends BaseApiService
 
             // 固定：所有彩种每年的期数都是从1开始
             if ($currentMaxIssue != $res->max_issue || $currentMaxIssue != $issueArr[0]) {
-                $res->update([
+                $query->update([
                     'max_issue' => $currentMaxIssue,
                     'issues' => json_encode($this->genNewIssues($currentMaxIssue, json_decode($res->issues, true)))
                 ]);
