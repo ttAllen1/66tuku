@@ -50,13 +50,13 @@ class DeleteEqKeyword extends Command
             $pictureTypeIds[] = $result['pictureTypeId'];
         }
         DB::beginTransaction();
-//        YearPic::query()
-//            ->whereIn('id', $yearIds)
-//            ->where('is_add', 0)
-//            ->where('max_issue', 114)->update(['is_delete'=>1, 'updated_at'=>date('Y-m-d H:i:s')]);
-//        IndexPic::query()
-//            ->whereIn('pictureTypeId', $pictureTypeIds)
-//            ->update(['is_delete'=>1, 'updated_at'=>date('Y-m-d H:i:s')]);
+        YearPic::query()
+            ->whereIn('id', $yearIds)
+            ->where('is_add', 0)
+            ->where('max_issue', 114)->update(['is_delete'=>1, 'updated_at'=>date('Y-m-d H:i:s')]);
+        IndexPic::query()
+            ->whereIn('pictureTypeId', $pictureTypeIds)
+            ->update(['is_delete'=>1, 'updated_at'=>date('Y-m-d H:i:s')]);
         DB::commit();
         dd($results);
 
