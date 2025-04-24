@@ -365,12 +365,9 @@ class HistoryService extends BaseApiService
                 $res->where('is_add', '>', 0);
             }
 
-            $res->select(['max_issue', 'issues'])->firstOrFail();
-
+            $res = $res->select(['max_issue', 'issues'])->firstOrFail();
             $currentMaxIssue = ltrim(Redis::get('lottery_real_open_issue_'.$lotteryType), 0);
-            if (request()->input('ts', 0) == 1) {
-                dd($currentMaxIssue, $lotteryType, $res);
-            }
+
             if ($lotteryType == 2) {
                 $currentMaxIssue = str_replace($year, '', $currentMaxIssue);
             }
@@ -383,11 +380,8 @@ class HistoryService extends BaseApiService
                 ]);
             }
         } catch (\Exception $exception) {
-            if (request()->input('ts', 0) == 1) {
-                dd($exception->getMessage(), $exception->getLine());
-            }
             if ($exception instanceof ModelNotFoundException) {
-                return;
+                return ;
             }
             throw new CustomException(['message'=>'最新期更新失败：'.$exception->getMessage()]);
         }
