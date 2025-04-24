@@ -341,11 +341,80 @@ class HistoryService extends BaseApiService
     }
 
     /**
+     * @param $lotteryType
+     * @return void
+     * 元旦前夕：module:year-pic-db
+     * @throws CustomException
+     */
+    public function update_year_issue($lotteryType)
+    {
+        try{
+            $year = date('Y');
+
+            $res = YearPic::query()
+                ->where('year', $year)
+                ->where('lotteryType', $lotteryType)
+                ->orderBy('max_issue');
+
+            // 根据彩种类型添加条件
+            if ($lotteryType == 1) {
+                $res->where(function ($q) {
+                    $q->where('color', 2)->orWhere('is_add', '>=', 1);
+                });
+            } elseif ($lotteryType == 2) {
+                $res->where('is_add', '>', 0);
+            }
+
+            $res->select(['max_issue', 'issues'])->firstOrFail();
+
+            $currentMaxIssue = ltrim(Redis::get('lottery_real_open_issue_'.$lotteryType), 0);
+            if ($lotteryType == 2) {
+                $currentMaxIssue = str_replace($year, '', $currentMaxIssue);
+            }
+            $issueArr = json_decode($res->issues, true);
+            // 固定：所有彩种每年的期数都是从1开始
+            if ($currentMaxIssue != $res->max_issue || $currentMaxIssue != $issueArr[0]) {
+                $res->update([
+                    'max_issue' => $currentMaxIssue,
+                    'issues' => json_encode($this->genNewIssues($currentMaxIssue, json_decode($res->issues, true)))
+                ]);
+            }
+        } catch (\Exception $exception) {
+            if ($exception instanceof ModelNotFoundException) {
+                return;
+            }
+            throw new CustomException(['message'=>'最新期更新失败：'.$exception->getMessage()]);
+        }
+    }
+
+    /**
+     * 生成新的期数
+     * @param $maxIssue
+     * @param $issuesArr
+     * @return array
+     */
+    public function genNewIssues($maxIssue, $issuesArr): array
+    {
+        $firstIssue = $issuesArr[0];
+        $firstIssue = ltrim($firstIssue, '第');
+        $firstIssue = rtrim($firstIssue, '期');
+        $firstIssue = (int)$firstIssue;
+        $currentMaxIssue = (int)$maxIssue;
+        if ($currentMaxIssue > $firstIssue) {
+            for ($i = $firstIssue+1; $i <= $currentMaxIssue; $i++) {
+                array_unshift($issuesArr, '第' . $i . '期');
+            }
+        }
+
+        return array_unique($issuesArr);
+    }
+
+    /**
      * 自动更新期数
      * @return void
      * @throws CustomException
      */
-    public function update_year_issue($lotteryType)
+    public function update_year_issue1($lotteryType)
     {
 //        if ($lotteryType == 2) {
 //            return ;
