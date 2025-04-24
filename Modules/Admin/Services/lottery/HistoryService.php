@@ -366,6 +366,9 @@ class HistoryService extends BaseApiService
             }
 
             $res = $res->select(['max_issue', 'issues'])->firstOrFail();
+            if (request()->input('ts', 0) == 1) {
+                dd($res);
+            }
             $currentMaxIssue = ltrim(Redis::get('lottery_real_open_issue_'.$lotteryType), 0);
 
             if ($lotteryType == 2) {
@@ -380,6 +383,9 @@ class HistoryService extends BaseApiService
                 ]);
             }
         } catch (\Exception $exception) {
+            if (request()->input('ts', 0) == 1) {
+                dd($exception->getMessage(), $exception->getLine());
+            }
             if ($exception instanceof ModelNotFoundException) {
                 return ;
             }
