@@ -16,6 +16,7 @@ use Modules\Admin\Console\Commands\CheckTransfer;
 use Modules\Admin\Console\Commands\ClearCorpusDomain;
 use Modules\Admin\Console\Commands\CorpusCommand;
 use Modules\Admin\Console\Commands\DelComments;
+use Modules\Admin\Console\Commands\DeleteEqKeyword;
 use Modules\Admin\Console\Commands\DiagramCommand;
 use Modules\Admin\Console\Commands\FiveVirtualNumber;
 use Modules\Admin\Console\Commands\ForecastBetFive;
@@ -143,7 +144,8 @@ class Kernel extends ConsoleKernel
         AutoXgAmMaxIssues::class,
         SpiderXgBlackImg::class,
         BatchAddImages::class,
-        AutoPutDiscuss::class
+        AutoPutDiscuss::class,
+        DeleteEqKeyword::class
     ];
 
     /**
