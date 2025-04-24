@@ -368,6 +368,9 @@ class HistoryService extends BaseApiService
             $res->select(['max_issue', 'issues'])->firstOrFail();
 
             $currentMaxIssue = ltrim(Redis::get('lottery_real_open_issue_'.$lotteryType), 0);
+            if (request()->input('ts', 0) == 1) {
+                dd($currentMaxIssue, $lotteryType, $res->max_issue, $res->issues);
+            }
             if ($lotteryType == 2) {
                 $currentMaxIssue = str_replace($year, '', $currentMaxIssue);
             }
