@@ -348,6 +348,9 @@ class HistoryService extends BaseApiService
      */
     public function update_year_issue($lotteryType)
     {
+        if (request()->input('ts', 0) == 1) {
+            dd(111);
+        }
         try{
             $year = date('Y');
 

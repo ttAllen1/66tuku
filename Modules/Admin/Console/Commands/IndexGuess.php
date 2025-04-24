@@ -68,7 +68,7 @@ class IndexGuess extends Command
             if (!$nextIssue || $latestPeriod === $nextIssue) {
                 return;
             }
-            if (!in_array($rdsData['current_te_num'], ["后", "快", "步", "宾", "00"])) {
+            if (!in_array($rdsData['current_te_num'], ["后", "快", "步", "宾", "00", "啦", "中"])) {
                 $this->updateExistingRecords($lottery, $year, $nextIssue, $rdsData['current_te_num']);
                 $this->insertNewGuess($lottery, $year, $nextIssue);
             }
