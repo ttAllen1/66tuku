@@ -541,6 +541,7 @@ class RealOpenLotteryV extends Command
      */
     function totalJoinOpen()
     {
+        return 1;
         try{
             $current = Carbon::now(); // 获取当前时间
             $hour = $current->hour;
