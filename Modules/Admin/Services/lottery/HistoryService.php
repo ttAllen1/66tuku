@@ -374,9 +374,9 @@ class HistoryService extends BaseApiService
             }
             $issueArr = json_decode($res->issues, true);
 
-            if (request()->input('ts', 0) == 1) {
-                dd($res, $currentMaxIssue, $res->max_issue, $issueArr[0], json_encode($this->genNewIssues($currentMaxIssue, json_decode($res->issues, true))));
-            }
+//            if (request()->input('ts', 0) == 1) {
+//                dd($res, $currentMaxIssue, $res->max_issue, $issueArr[0], json_encode($this->genNewIssues($currentMaxIssue, json_decode($res->issues, true))));
+//            }
 
             // 固定：所有彩种每年的期数都是从1开始
             if ($currentMaxIssue != $res->max_issue || $currentMaxIssue != $issueArr[0]) {
