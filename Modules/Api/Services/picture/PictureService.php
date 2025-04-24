@@ -1234,6 +1234,10 @@ class PictureService extends BaseApiService
         if (! Str::startsWith($url, ['http://', 'https://'])) {
             $url = $this->appendSuffixToFilename(config('config.49_full_srv_img_prefix') . $url, '_nowater');
         }
+        // 强制必须带上 _nowater
+        if (! Str::contains($url, '_nowater')) {
+            $url = $this->appendSuffixToFilename($url, '_nowater');
+        }
 
         // 2. 解析 URL 路径，保留 upload/... 部分
         $parsed = parse_url($url);
