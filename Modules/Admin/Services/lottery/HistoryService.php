@@ -364,7 +364,7 @@ class HistoryService extends BaseApiService
             } elseif ($lotteryType == 2) {
                 $query->where('is_add', '>', 0);
             }
-
+            $subQuery = $query->clone()->select(['max_issue', 'issues']);
             $res = $query->select(['id', 'max_issue', 'issues'])->firstOrFail();
 
             $currentMaxIssue = ltrim(Redis::get('lottery_real_open_issue_'.$lotteryType), 0);
@@ -380,7 +380,7 @@ class HistoryService extends BaseApiService
 
             // 固定：所有彩种每年的期数都是从1开始
             if ($currentMaxIssue != $res->max_issue || $currentMaxIssue != $issueArr[0]) {
-                $query->update([
+                $subQuery->update([
                     'max_issue' => $currentMaxIssue,
                     'issues' => json_encode($this->genNewIssues($currentMaxIssue, json_decode($res->issues, true)))
                 ]);
