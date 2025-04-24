@@ -365,7 +365,7 @@ class HistoryService extends BaseApiService
                 $query->where('is_add', '>', 0);
             }
             $subQuery = $query->clone()->select(['max_issue', 'issues']);
-            $res = $query->select(['id', 'max_issue', 'issues'])->firstOrFail();
+            $res = $query->select(['max_issue', 'issues'])->firstOrFail();
 
             $currentMaxIssue = ltrim(Redis::get('lottery_real_open_issue_'.$lotteryType), 0);
 
