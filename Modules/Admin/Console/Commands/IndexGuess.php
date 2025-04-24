@@ -68,13 +68,38 @@ class IndexGuess extends Command
             if (!$nextIssue || $latestPeriod === $nextIssue) {
                 return;
             }
-            if (!in_array($rdsData['current_te_num'], ["后", "快", "步", "宾", "00", "啦", "中"])) {
+//            if (!in_array($rdsData['current_te_num'], ["后", "快", "步", "宾", "00", "啦", "中"])) {
+//                $this->updateExistingRecords($lottery, $year, $nextIssue, $rdsData['current_te_num']);
+//                $this->insertNewGuess($lottery, $year, $nextIssue);
+//            }
+            if ( !$this->isChineseOrDoubleZero($rdsData['current_te_num'])) {
                 $this->updateExistingRecords($lottery, $year, $nextIssue, $rdsData['current_te_num']);
                 $this->insertNewGuess($lottery, $year, $nextIssue);
             }
         } catch (\Throwable $e) {
             Log::error("彩票类型 {$lottery} 处理失败: " . $e->getMessage());
         }
+    }
+
+    /**
+     * 检测值是否为汉字或"00"
+     * @param mixed $value 要检测的值
+     * @return bool 如果是汉字或"00"返回true，否则false
+     */
+    public function isChineseOrDoubleZero($value): bool
+    {
+        // 1. 检查是否为"00"
+        if ($value === "00") {
+            return true;
+        }
+
+        // 2. 检查是否为单个汉字
+        if (is_string($value) && mb_strlen($value) === 1) {
+            // 正则匹配Unicode汉字范围（包括基本汉字和扩展汉字区）
+            return (bool)preg_match('/^[\x{4e00}-\x{9fa5}\x{3400}-\x{4dbf}\x{20000}-\x{2a6df}\x{2a700}-\x{2b73f}\x{2b740}-\x{2b81f}\x{2b820}-\x{2ceaf}\x{2ceb0}-\x{2ebef}\x{30000}-\x{3134f}]$/u', $value);
+        }
+
+        return false;
     }
 
     function isChineseCharacter(string $char): bool
