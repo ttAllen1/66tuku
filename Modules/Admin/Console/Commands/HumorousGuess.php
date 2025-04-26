@@ -15,9 +15,10 @@ class HumorousGuess extends Command
 
     protected $_years = [2020, 2021, 2022, 2023];
 
-    protected $_lotteryTypes = [1, 2, 3, 4];
+    protected $_lotteryTypes = [1, 2];
 
-    protected $_period_list_url = 'https://49208.com/unite49/h5/guess/listPeriod?year=%s';
+//    protected $_period_list_url = 'https://49208.com/unite49/h5/guess/listPeriod?year=%s';
+    protected $_period_list_url = 'https://jzssdz.99jj3.cc/gallerynew/h5/guess/listPeriod?year=%s';
     /**
      * The name and signature of the console command.
      *
@@ -106,7 +107,7 @@ class HumorousGuess extends Command
                     'verify'=>false
                 ])->withHeaders([
                     'Lotterytype' => $lotteryType
-                ])->post(sprintf('https://49208.com/unite49/h5/guess/detail?id=%d&reload=1', $period['guessId']), [
+                ])->post(sprintf('https://jzssdz.99jj3.cc/gallerynew/h5/guess/detail?id=%d&reload=1', $period['guessId']), [
                     'cache_buster' => uniqid(), // 添加一个唯一的查询参数
                 ]);
                 $guessData = json_decode($response->body(), true);
