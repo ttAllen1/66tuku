@@ -133,6 +133,10 @@ Route::group(["prefix"=>"v1", "middleware"=>["GlobalMiddleware"]],function (){
                 // 高手榜
                 Route::post('expert/create', 'v1\ExpertController@create');  // 发布
                 Route::post('expert/previous', 'v1\ExpertController@previous');
+
+                // 猜拳活动
+                Route::post('mora/create', 'v1\MoraController@create');  // 发布
+                Route::post('mora/join', 'v1\MoraController@join');  // 竞猜
             });
 
             // 资金出入站
