@@ -12,10 +12,14 @@ use Modules\Api\Models\UserChat;
 use Modules\Api\Services\room\RoomService;
 use Modules\Common\Services\BaseService;
 use Swoole\Coroutine;
-use Swoole\Coroutine\Http\Client;
+//use Swoole\Coroutine\Http\Client;
 use Swoole\Process;
 use Symfony\Component\Console\Input\InputOption;
 use Swoole\Coroutine\Http\Client as CoHttpClient;
+use GuzzleHttp\Client;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Handler\CurlHandler;
+use GuzzleHttp\RequestOptions;
 
 class RealOpenLotteryVV extends Command
 {
@@ -33,7 +37,7 @@ class RealOpenLotteryVV extends Command
             'start'       => '21:00',
             'end'         => '23:00',
             'file_name'   => 'v_xg.json',
-            'open_time'    => '16:30',  // 开奖开始时间
+            'open_time'    => '17:00',  // 开奖开始时间
             'silent_before'=> 1800,      // 距离开奖多少秒前开始关注/推“准备开奖”
         ],
         1 => [
@@ -182,57 +186,57 @@ class RealOpenLotteryVV extends Command
     }
 
     /**
-     * 拉取开奖接口数据
-     *
-     * @param array $cfg    彩种配置信息（包含url、端口、路径等）
-     * @return array        成功返回开奖数据数组；失败返回空数组
+     * 使用 Guzzle+Swoole 协程请求数据
+     * @param array $cfg 配置数组
+     * @return array 返回的数据
      */
     protected function fetchData(array $cfg): array
     {
         try {
-            // 解析 host
+            // 解析host和path
             $urlInfo = parse_url($cfg['url_77']);
             $host = $urlInfo['host'] ?? $cfg['url_77'];
             $port = $cfg['port_77'] ?? 443;
+            $scheme = ($port === 443 || $port === 8443) ? 'https' : 'http';
+            $path = $cfg['path_77'] ?? '/';
 
+            // 组装完整URL
+            $url = "{$scheme}://{$host}:{$port}{$path}";
+//            dd($url);
 
-            // 实例化协程 HTTP 客户端
-            $cli = new CoHttpClient($host, $port, true); // true=启用SSL，即HTTPS
-//            dd($host, $port, $cli);
-            // 设置请求超时、HTTP头等
-            $cli->set([
-                'timeout' => 3,
-                'ssl_verify_peer' => false,   // 不验证SSL证书
-                'ssl_allow_self_signed' => true, // 允许自签名证书
+            // 实例化 Guzzle 客户端
+            $client = new Client([
+                'handler' => HandlerStack::create(new CurlHandler()), // 使用默认Curl处理器
+                'timeout' => 5.0,            // 整体请求超时 5 秒（包含连接+收数据）
+                'connect_timeout' => 3.0,    // 连接超时时间 3 秒
+                'read_timeout' => 2.0,       // 读取服务器返回超时时间 2 秒
+                'verify' => false,           // 不校验证书（适合自签名或内部接口）
+                'http_errors' => false,      // 关闭异常抛出（自己处理状态码）
             ]);
 
             // 发起 GET 请求
-            $cli->get($cfg['path_77']);
+            $response = $client->request('GET', $url);
 
-            // 检查 HTTP 状态码
-            if ($cli->statusCode !== 200) {
-                throw new \Exception("HTTP请求失败，状态码：{$cli->statusCode}");
+            // 检查状态码
+            $statusCode = $response->getStatusCode();
+            if ($statusCode !== 200) {
+                throw new \Exception("HTTP请求失败，状态码：{$statusCode}");
             }
 
-            // 获取响应体
-            $body = $cli->body;
+            // 读取响应体
+            $body = (string) $response->getBody();
 
-
-            // 关闭连接，释放资源
-            $cli->close();
-
-            // 尝试解析 JSON
+            // 尝试解析JSON
             $json = json_decode($body, true);
             if (!is_array($json)) {
                 throw new \Exception("接口返回内容非JSON格式：$body");
             }
 
             return $json;
-
         } catch (\Throwable $e) {
-            // 记录异常日志
+            // 记录错误
             Log::warning("拉取彩种{$cfg['lotteryType']}数据失败：" . $e->getMessage());
-            return []; // 出错时返回空数组
+            return [];
         }
     }
 
