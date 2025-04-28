@@ -156,9 +156,9 @@ class RealOpenLotteryVV extends Command
                     $this->pullLoop($cfg);
                 });
                 // 推送协程
-//                go(function() use ($cfg) {
-//                    $this->pushLoop($cfg);
-//                });
+                go(function() use ($cfg) {
+                    $this->pushLoop($cfg);
+                });
             });
             $proc->start();
         }
