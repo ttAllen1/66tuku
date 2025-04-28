@@ -33,8 +33,8 @@ class RealOpenLotteryVV extends Command
             'start'       => '21:00',
             'end'         => '23:00',
             'file_name'   => 'v_xg.json',
-            'open_time'    => '21:30',  // 开奖开始时间
-            'silent_before'=> 120,      // 距离开奖多少秒前开始关注/推“准备开奖”
+            'open_time'    => '16:30',  // 开奖开始时间
+            'silent_before'=> 1800,      // 距离开奖多少秒前开始关注/推“准备开奖”
         ],
         1 => [
             'name'        => '新澳门六合彩',
@@ -208,14 +208,6 @@ class RealOpenLotteryVV extends Command
 
             // 发起 GET 请求
             $cli->get($cfg['path_77']);
-            var_dump([
-                'host' => $host,
-                'port' => $port,
-                'ssl'  => true,
-                'statusCode' => $cli->statusCode,
-                'body' => $cli->body,
-            ]);
-            dd(1);
 
             // 检查 HTTP 状态码
             if ($cli->statusCode !== 200) {
@@ -239,7 +231,6 @@ class RealOpenLotteryVV extends Command
 
         } catch (\Throwable $e) {
             // 记录异常日志
-            dd($e->getMessage());
             Log::warning("拉取彩种{$cfg['lotteryType']}数据失败：" . $e->getMessage());
             return []; // 出错时返回空数组
         }
@@ -255,7 +246,6 @@ class RealOpenLotteryVV extends Command
      */
     protected function pullLoop(array $cfg)
     {
-        $dataObj = $this->fetchData($cfg);
 
         $queueKey    = "real_open_queue_{$cfg['lotteryType']}";
         $stageKey    = "real_open_stage_{$cfg['lotteryType']}";
