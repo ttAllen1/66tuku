@@ -949,4 +949,10 @@ class IndexService extends BaseApiService
         if (in_array($num, $blues, true))  return '蓝';
         return '绿';
     }
+
+
+    public function test($params)
+    {
+        dd($params);
+    }
 }
