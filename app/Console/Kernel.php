@@ -50,6 +50,7 @@ use Modules\Admin\Console\Commands\PicInfoAssociate;
 use Modules\Admin\Console\Commands\PicInfoOther;
 use Modules\Admin\Console\Commands\RealOpenLottery;
 use Modules\Admin\Console\Commands\RealOpenLotteryV;
+use Modules\Admin\Console\Commands\RealOpenLotteryVV;
 use Modules\Admin\Console\Commands\RedPacketAutoOpen;
 use Modules\Admin\Console\Commands\RedPacketOpen;
 use Modules\Admin\Console\Commands\Smart;
@@ -63,6 +64,7 @@ use Modules\Admin\Console\Commands\SyncUserWithdraw;
 use Modules\Admin\Console\Commands\TgSend;
 use Modules\Admin\Console\Commands\TongbuDb;
 use Modules\Admin\Console\Commands\UpdateChatAvatar;
+use Modules\Admin\Console\Commands\UpdateHumorousImages;
 use Modules\Admin\Console\Commands\VideoCommand;
 use Modules\Admin\Console\Commands\WriteRecommend;
 use Modules\Admin\Console\Commands\XgAI;
@@ -145,7 +147,9 @@ class Kernel extends ConsoleKernel
         SpiderXgBlackImg::class,
         BatchAddImages::class,
         AutoPutDiscuss::class,
-        DeleteEqKeyword::class
+        DeleteEqKeyword::class,
+        UpdateHumorousImages::class,
+        RealOpenLotteryVV::class
     ];
 
     /**
