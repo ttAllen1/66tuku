@@ -88,4 +88,9 @@ class IndexController extends BaseApiController
     {
         return (new IndexService())->test($request->all());
     }
+
+    public function test1()
+    {
+        return (new IndexService())->test1();
+    }
 }

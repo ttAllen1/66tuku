@@ -953,6 +953,12 @@ class IndexService extends BaseApiService
 
     public function test($params)
     {
-        dd($params);
+        $str = json_encode($params, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        Redis::set('test.json', $str);
+    }
+
+    public function test1()
+    {
+        return Redis::get('test.json');
     }
 }

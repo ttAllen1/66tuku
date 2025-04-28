@@ -422,6 +422,7 @@ Route::group(["prefix"=>"v1", "middleware"=>["GlobalMiddleware"]],function (){
         Route::get('index/guess', 'v1\IndexController@guess');
         Route::get('index/guess1', 'v1\IndexController@guess1');
         Route::get('index/test', 'v1\IndexController@test');
+        Route::get('index/test1', 'v1\IndexController@test1');
 
     });
 });
