@@ -414,6 +414,10 @@ Route::group(["prefix"=>"v1", "middleware"=>["GlobalMiddleware"]],function (){
 
         Route::get('tg/send', 'v1\ThreeController@send');
 
+        // 猜拳活动
+        Route::get('mora/square', 'v1\MoraController@square');  // 广场
+        Route::get('mora/list', 'v1\MoraController@list');  // 列表
+
 
         // ai
         Route::get('ai/config', 'v1\AiController@config');
