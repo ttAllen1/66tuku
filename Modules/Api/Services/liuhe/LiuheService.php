@@ -744,4 +744,18 @@ class LiuheService extends BaseApiService
 
         return $this->apiSuccess(ApiMsgData::GET_API_SUCCESS, $list);
     }
+
+    public function history_issue($params): JsonResponse
+    {
+        $history = HistoryNumber::query()
+//            ->where('year', $params['year'])
+            ->where('lotteryType', $params['lotteryType'])
+            ->orderByDesc('created_at')
+            ->orderBy('issue', 'desc')
+            ->limit($params['nums'])
+            ->get();
+
+        return $this->apiSuccess(ApiMsgData::GET_API_SUCCESS, $history->toArray());
+    }
+
 }

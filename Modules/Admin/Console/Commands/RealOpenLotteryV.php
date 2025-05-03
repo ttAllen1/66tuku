@@ -133,6 +133,7 @@ class RealOpenLotteryV extends Command
 
     public function handle()
     {
+        return ;
         for ($i = 0; $i <= 6; $i++) {
             if ($i == 2 || $i == 3) {
                 continue;

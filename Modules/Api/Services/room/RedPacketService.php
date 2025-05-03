@@ -17,16 +17,20 @@ use Modules\Common\Models\UserRed;
 
 class RedPacketService extends BaseApiService
 {
+    public $_room_id = 5;
 
     /**
      * 红包列表
+     * @param $params
      * @return JsonResponse
      */
-    public function list(): JsonResponse
+    public function list($params): JsonResponse
     {
         $userId = auth('user')->id();
+        $roomId = $params['room_id'] ?? $this->_room_id;
         $roomList = RedPacket::query()
             ->latest()
+            ->where('room_id', $roomId)
             ->whereDate('start_date', date('Y-m-d'))
             ->select(['id', 'name', 'last_nums', 'created_at', 'status', 'valid_date', 'type'])
 //            ->where('status', '<>', -1)->get()->toArray()

@@ -134,4 +134,9 @@ class LiuheController extends BaseApiController
         return (new LiuheService())->lottery();
     }
 
+    public function history_issue(Request $request)
+    {
+        return (new LiuheService())->history_issue($request->all());
+    }
+
 }

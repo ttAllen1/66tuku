@@ -18,6 +18,7 @@ use Modules\Api\Services\room\RoomService;
 
 class RedPacketService extends BaseApiService
 {
+    public $_room_id = 10; // 聊天室房间号
     public function __construct()
     {
         parent::__construct();
@@ -126,6 +127,7 @@ class RedPacketService extends BaseApiService
 
             unset($params['id']);
             $params['last_nums'] = $params['nums'];
+            $params['room_id'] = $params['room_id'] ?? $this->_room_id;
             if (!$params['moneys'] || $params['moneys'] == '[]') {
                 throw new CustomException(['message'=>'红包金额不能为空']);
             }
@@ -160,7 +162,7 @@ class RedPacketService extends BaseApiService
             if (!$redId) {
                 throw new CustomException(['message'=>'红包新增失败']);
             }
-            $room_id = 5;
+            $room_id = $params['room_id'];
             $from = 54377;
             if ($params['is_immediately'] == 1) {
                 // 发送到聊天室
@@ -216,6 +218,7 @@ class RedPacketService extends BaseApiService
         try{
             DB::beginTransaction();
             $params['last_nums'] = $params['nums'];
+            $params['room_id'] = $params['room_id'] ?? $this->_room_id;
             if (!$params['moneys'] || $params['moneys'] == '[]') {
                 throw new CustomException(['message'=>'红包金额不能为空']);
             }
@@ -251,7 +254,7 @@ class RedPacketService extends BaseApiService
             if (!$redId) {
                 throw new CustomException(['message'=>'红包更新失败']);
             }
-            $room_id = 5;
+            $room_id = $params['room_id'];
             $from = 54377;
             if ($params['is_immediately'] == 1) {
                 // 发送到聊天室

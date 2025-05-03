@@ -11,11 +11,12 @@ class RedPacketController extends BaseApiController
 {
     /**
      * 红包列表
+     * @param RedPacketRequest $request
      * @return JsonResponse
      */
-    public function list(): JsonResponse
+    public function list(RedPacketRequest $request): JsonResponse
     {
-        return (new RedPacketService())->list();
+        return (new RedPacketService())->list($request->only(['room_id']));
     }
 
     /**

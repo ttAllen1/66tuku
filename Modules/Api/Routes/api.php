@@ -291,6 +291,8 @@ Route::group(["prefix"=>"v1", "middleware"=>["GlobalMiddleware"]],function (){
         Route::get('liuhe/record', 'v1\LiuheController@record');
         // 历史号码记录
         Route::get('liuhe/history', 'v1\LiuheController@history');
+        // 历史号码记录
+        Route::get('liuhe/history_issue', 'v1\LiuheController@history_issue');
         // 历史推荐 + 新一期推荐
         Route::get('liuhe/recommend', 'v1\LiuheController@recommend');
         // 开奖日期

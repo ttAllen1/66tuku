@@ -85,6 +85,7 @@ class CommonService extends BaseApiService
         try{
             $today = date('Y-m-d');
             $redInfo = RedPacket::query()
+                ->where('room_id', 5)
                 ->whereDate('start_date', $today)
                 ->whereIn('status', [-1, 1])
                 ->where('last_nums', '>', 0)
@@ -97,6 +98,7 @@ class CommonService extends BaseApiService
             } else {
                 // 获取当天的活动开始时间和结束时间
                 $startEndTimes = DB::table('red_packets')
+                    ->where('room_id', 5)
                     ->whereDate('start_date', $today)
                     ->whereIn('status', [-1, 1])
                     ->selectRaw("
@@ -115,6 +117,7 @@ class CommonService extends BaseApiService
                     if ($isReceived) {
                         // 如果已经领取，寻找下一个未领取的红包
                         $nextRedInfo = RedPacket::query()
+                            ->where('room_id', 5)
                             ->whereDate('start_date', $today)
                             ->whereIn('status', [-1, 1])
                             ->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(valid_date, '$[0]')) > ?", [$redInfo->least_time])
