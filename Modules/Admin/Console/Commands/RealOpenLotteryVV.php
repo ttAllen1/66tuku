@@ -149,6 +149,7 @@ class RealOpenLotteryVV extends Command
 
     public function handle()
     {
+        return;
         foreach ($this->_configs as $idx => $cfg) {
             // 跳过不需要的彩种
             if (in_array($idx, [1, 2, 3, 4, 5, 6])) continue;    // [2, 3]
