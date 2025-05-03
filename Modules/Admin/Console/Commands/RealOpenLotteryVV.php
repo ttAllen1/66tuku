@@ -31,13 +31,13 @@ class RealOpenLotteryVV extends Command
             'lotteryType' => 1,
             'port'        => 777,
             'url'         => 'zhibo.chong0123.com',
-            'url_77'      => 'api.49api66.com',
-            'path_77'     => '/api/v1/index/test1',
-            'port_77'     => 8443,
+            'url_77'      => 'yc.kkjj.finance',
+            'path_77'     => '/data/v_xg.json',
+            'port_77'     => 80,
             'start'       => '21:00',
             'end'         => '23:00',
             'file_name'   => 'v_xg.json',
-            'open_time'    => '17:00',  // 开奖开始时间
+            'open_time'    => '21:31',  // 开奖开始时间
             'silent_before'=> 1800,      // 距离开奖多少秒前开始关注/推“准备开奖”
         ],
         1 => [
@@ -149,7 +149,6 @@ class RealOpenLotteryVV extends Command
 
     public function handle()
     {
-        return;
         foreach ($this->_configs as $idx => $cfg) {
             // 跳过不需要的彩种
             if (in_array($idx, [1, 2, 3, 4, 5, 6])) continue;    // [2, 3]
@@ -252,11 +251,11 @@ class RealOpenLotteryVV extends Command
     protected function pullLoop(array $cfg)
     {
 
-        $queueKey    = "real_open_queue_{$cfg['lotteryType']}";
-        $stageKey    = "real_open_stage_{$cfg['lotteryType']}";
-        $issueKey    = "real_open_issue_{$cfg['lotteryType']}";
-        $preparedKey = "real_open_prepared_{$cfg['lotteryType']}";
-        $prevKey     = "real_open_prev_{$cfg['lotteryType']}";
+        $queueKey    = "real_open_queue_{$cfg['lotteryType']}";      // 推送消息队列（聊天室监听这个）
+        $stageKey    = "real_open_stage_{$cfg['lotteryType']}";      // 当前开到第几个号
+        $issueKey    = "real_open_issue_{$cfg['lotteryType']}";      // 当前期号（换期重置）
+        $preparedKey = "real_open_prepared_{$cfg['lotteryType']}";   // 是否推送过"准备开奖"
+        $prevKey     = "real_open_prev_{$cfg['lotteryType']}";       // 今日开奖是否完成
 
         $today       = date('Ymd');
         $doneKey     = "real_open_done_{$cfg['lotteryType']}_{$today}";
@@ -285,8 +284,10 @@ class RealOpenLotteryVV extends Command
                     }
                     $dataArr = $dataObj['Data'];
                     $currentIssue = "{$dataObj['Year']}-{$dataObj['Qi']}";
+                    // dd($dataArr, $currentIssue);
 
                     $lastIssue = Redis::get($issueKey);
+                    // dd($lastIssue, $currentIssue, $prepared,$inWindow );
                     if ($lastIssue !== $currentIssue) {
                         // 新一期切换，重置所有标记
                         Redis::set($issueKey, $currentIssue);
@@ -296,7 +297,7 @@ class RealOpenLotteryVV extends Command
                         $stage = 0;
                         $prepared = 0;
                     }
-
+                    // dd($dataArr);
                     // —— 预热推送 prepare_open ——
                     if ($prepared === 0 && $inWindow) {
                         Redis::rpush($queueKey, json_encode(['event' => 'prepare_open']));
@@ -324,7 +325,7 @@ class RealOpenLotteryVV extends Command
                     }
 
                     // —— 如果 stage 达到7，说明本期开奖完成 ——
-                    if ($stage >= 8) {
+                    if ($stage >= 7) {
                         Redis::set($doneKey, 1); // 标记今日开奖已完成
                         Redis::expire($doneKey, 86000); // 24小时过期（可选）
                     }
@@ -337,7 +338,7 @@ class RealOpenLotteryVV extends Command
                 }
 
             } catch (\Throwable $e) {
-                Log::error("pullLoop error for lotteryType {$cfg['lotteryType']}: ".$e->getMessage());
+                Log::error("pullLoop error for lotteryType {$cfg['lotteryType']}: ".$e->getMessage() . " Line: " . $e->getLine() . " File: " . $e->getFile());
                 Coroutine::sleep(10);
             }
         }
