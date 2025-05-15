@@ -53,22 +53,21 @@ class HumorousGuessOldAm extends Command
     public function handle()
     {
 
-        $list = Humorous::query()
-            ->where('lotteryType', 7)
-            ->where('year', date('Y'))
-            ->orderBy('issue')
-            ->select(['id', 'imageUrl'])
-            ->get()->toArray();
-//        dd($list);
-        foreach ($list as $item) {
-            $originalUrl = $item['imageUrl'] ?? '';
-            $parsedUrl = parse_url($originalUrl);
-            $url = ($parsedUrl['scheme'] ?? 'https') . '://file-cf.114tu.com' . ($parsedUrl['path'] ?? '');
-            DB::table('humorous')
-                ->where('id', $item['id'])
-                ->update(['imageUrl' => $url]);
-        }
-        dd(1);
+//        $list = Humorous::query()
+//            ->where('lotteryType', 7)
+//            ->where('year', date('Y'))
+//            ->orderBy('issue')
+//            ->select(['id', 'imageUrl'])
+//            ->get()->toArray();
+//        foreach ($list as $item) {
+//            $originalUrl = $item['imageUrl'] ?? '';
+//            $parsedUrl = parse_url($originalUrl);
+//            $url = ($parsedUrl['scheme'] ?? 'https') . '://file-cf.114tu.com' . ($parsedUrl['path'] ?? '');
+//            DB::table('humorous')
+//                ->where('id', $item['id'])
+//                ->update(['imageUrl' => $url]);
+//        }
+//        dd(1);
 
         set_time_limit(0);
         foreach ($this->_lotteryTypes as $lotteryType) {
