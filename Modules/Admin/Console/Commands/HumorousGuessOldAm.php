@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
+use Modules\Api\Models\Humorous;
 use Modules\Api\Services\picture\PictureService;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -51,6 +52,24 @@ class HumorousGuessOldAm extends Command
      */
     public function handle()
     {
+
+        $list = Humorous::query()
+            ->where('lotteryType', 7)
+            ->where('year', date('Y'))
+            ->orderBy('issue')
+            ->select(['id', 'imageUrl'])
+            ->get()->toArray();
+//        dd($list);
+        foreach ($list as $item) {
+            $originalUrl = $item['imageUrl'] ?? '';
+            $parsedUrl = parse_url($originalUrl);
+            $url = ($parsedUrl['scheme'] ?? 'https') . '://file-cf.114tu.com' . ($parsedUrl['path'] ?? '');
+            DB::table('humorous')
+                ->where('id', $item['id'])
+                ->update(['imageUrl' => $url]);
+        }
+        dd(1);
+
         set_time_limit(0);
         foreach ($this->_lotteryTypes as $lotteryType) {
             if ($this->_history) {
@@ -90,7 +109,10 @@ class HumorousGuessOldAm extends Command
             $guessList['title']             = $res['data']['title'] ?? '';
             $guessList['pictureTitle']      = $res['data']['pictureTitle'] ?? '';
             $guessList['pictureContent']    = $res['data']['pictureContent'];
-            $guessList['imageUrl']          = $res['data']['pictureList'][0]['imageUrl'];
+            $originalUrl = $res['data']['pictureList'][0]['imageUrl'] ?? '';
+            $parsedUrl = parse_url($originalUrl);
+            $guessList['imageUrl'] = ($parsedUrl['scheme'] ?? 'https') . '://file-cf.114tu.com' . ($parsedUrl['path'] ?? '');
+//            $guessList['imageUrl']          = $res['data']['pictureList'][0]['imageUrl'];
             $guessList['width']             = $res['data']['pictureList'][0]['width'] ?? 0;
             $guessList['height']            = $res['data']['pictureList'][0]['height'] ?? 0;
             $guessList['videoTitle']        = $res['data']['videoTitle'] ?? '';
