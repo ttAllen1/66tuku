@@ -623,7 +623,7 @@ class VideoCommand extends Command
             {
                 $hour = date('H'); //当前时
                 $point = date('i'); //当前分
-                if (($hour == 21 && $point > 37) || ($hour == 22 && $point < 30)) {
+                if (($hour == 21 && $point > 37) || ($hour == 22 && $point < 60)) {
                     if (true) {
                         $this->video49($lotteryType);
                     } else {
@@ -752,10 +752,10 @@ class VideoCommand extends Command
                 {
                     $lastRow = DB::table('lottery_videos')
                         ->where('lotteryType', $lotteryType)
-                        ->orderByDesc('created_at')
+                        ->orderByDesc('id')
                         ->first();
 //                    $result = file_get_contents('https://his2.whboligj.com/api/HistoryOpenInfo/2032/' . date('Y-m-d'));
-                    $result = file_get_contents('https://a6tk23.com/gallerynew/h5/index/listLotteryVideo?pageNum=1&pageSize=12&lotteryType=2');
+                    $result = file_get_contents('https://a6tk27.com/gallerynew/h5/index/listLotteryVideo?pageNum=1&pageSize=12&lotteryType=2');
                     $data = json_decode($result, true);
                     $sortData = [];
                     $end = 50;
@@ -772,7 +772,7 @@ class VideoCommand extends Command
                         $tempArr = [
                             'issue' => $issue[0],
                             'videoUrl' => $item['videoUrl'],
-//                            'openTime' => $item['openTime']
+                            //                            'openTime' => $item['openTime']
                             'openTime' => date('Y-m-d H:i:s')
                         ];
                         array_unshift($sortData, $tempArr);
