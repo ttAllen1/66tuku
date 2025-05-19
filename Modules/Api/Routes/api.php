@@ -137,6 +137,9 @@ Route::group(["prefix"=>"v1", "middleware"=>["GlobalMiddleware"]],function (){
                 // 猜拳活动
                 Route::post('mora/create', 'v1\MoraController@create');  // 发布
                 Route::post('mora/join', 'v1\MoraController@join');  // 竞猜
+
+                // 新高手榜
+                Route::post('master_ranking/create', 'v1\MasterRankingController@create'); // 创建
             });
 
             // 资金出入站
@@ -419,6 +422,11 @@ Route::group(["prefix"=>"v1", "middleware"=>["GlobalMiddleware"]],function (){
         // 猜拳活动
         Route::get('mora/square', 'v1\MoraController@square');  // 广场
         Route::get('mora/list', 'v1\MoraController@list');  // 列表
+
+        // 高手版【新】
+        Route::get('master_ranking/configs', 'v1\MasterRankingController@configs'); // 高手榜配置信息
+        Route::get('master_ranking/list', 'v1\MasterRankingController@list'); // 列表
+
 
 
         // ai

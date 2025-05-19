@@ -1095,7 +1095,6 @@ class BaseService
     {
 //        return 279;
         $arr = Redis::get('real_open_' . $lotteryType);
-
         if ($arr) {
             $arr = explode(',', $arr);
             if ($lotteryType == 2) {
