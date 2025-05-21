@@ -300,6 +300,7 @@ class CommentService extends BaseApiService
     public function create($params): JsonResponse
     {
         try{
+            $msg = '';
             $userId = auth('user')->id();
             $maxTime = DB::table('user_comments')->where('user_id', $userId)->max('created_at');
             if ($maxTime && strtotime($maxTime) + 20 > time()) {
@@ -351,9 +352,11 @@ class CommentService extends BaseApiService
                 $checkStatus = $this->getCheckStatus($params['type']);
                 if ($checkStatus==1) {  // 状态：1开启审核
                     $createData['status']        = 0;
+                    $msg = '评论成功，待审核通过即可展示！';
                 } else {  // 2关闭审核
                     $createData['status']        = 1;
                 }
+
             }
 
             $comment = $targetOrm->comments()->create($createData);
@@ -379,7 +382,7 @@ class CommentService extends BaseApiService
             throw new CustomException(['message'=>$exception->getMessage()]);
         }
 
-        return $this->apiSuccess(ApiMsgData::COMMENT_API_SUCCESS);
+        return $this->apiSuccess($msg ?: ApiMsgData::COMMENT_API_SUCCESS);
     }
 
     /**
