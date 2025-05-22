@@ -148,8 +148,8 @@ class MasterRankingService extends BaseApiService
 
             // 如果是别的错误，继续抛出
             Log::error('新高手榜创建失败', [
-                'error' => $e->getMessage(),
-                'sql' => $e->getSql(),
+                'error'  => $e->getMessage(),
+                'sql'    => $e->getSql(),
                 'params' => $e->getBindings(),
             ]);
             throw new CustomException(['message' => '创建失败']);
@@ -385,7 +385,7 @@ class MasterRankingService extends BaseApiService
             return $this->apiSuccess('已购买，请勿重复购买');
         }
         // 开始支付
-        try{
+        try {
             DB::beginTransaction();
             $user = User::query()->where('id', $userId)->select(['id', 'account_balance'])->firstOrFail();
             if ($user->account_balance < $info['fee']) {
@@ -397,8 +397,7 @@ class MasterRankingService extends BaseApiService
             $market_fee = AuthActivityConfig::val('market_fee') ?? 0;
             $actual_money = $info['fee'] - ($info['fee'] * $market_fee / 100);
             // 扣除用户余额
-            $user->account_balance -= $info['fee'];
-            $user->save();
+
             // 金币记录(付费端)
             $userGolds['user_id'] = $userId;
             $userGolds['type'] = 30;
@@ -408,10 +407,11 @@ class MasterRankingService extends BaseApiService
             $userGolds['user_market_id'] = $params['market_id'];
             $userGolds['created_at'] = $now;
             DB::table('user_gold_records')->insert($userGolds);
+            $user->account_balance -= $info['fee'];
+            $user->save();
             // 金币记录(收益端)
             $user2 = User::query()->where('id', $info['user_id'])->select(['id', 'account_balance'])->firstOrFail();
-            $user2->account_balance += $actual_money;
-            $user2->save();
+
             $userGolds['user_id'] = $info['user_id'];
             $userGolds['type'] = 31;
             $userGolds['gold'] = $actual_money;
@@ -420,20 +420,25 @@ class MasterRankingService extends BaseApiService
             $userGolds['user_market_id'] = $params['market_id'];
             $userGolds['created_at'] = $now;
             DB::table('user_gold_records')->insert($userGolds);
+            $user2->account_balance += $actual_money;
+            $user2->save();
             // 购买记录
             DB::table('user_master_rankings')->insert([
-                'user_id'     => $userId,
-                'market_user_id'     => $info['user_id'],
-                'market_id'   => $params['market_id'],
-                'lotteryType' => $info['lotteryType'],
-                'issue' => $info['issue'],
-                'year' => $info['year'],
-                'created_at'  => $now,
+                'user_id'        => $userId,
+                'market_user_id' => $info['user_id'],
+                'market_id'      => $params['market_id'],
+                'lotteryType'    => $info['lotteryType'],
+                'issue'          => $info['issue'],
+                'year'           => $info['year'],
+                'pay_money'      => $info['fee'],
+                'actual_money'   => $actual_money,
+                'fee'            => $market_fee,
+                'created_at'     => $now,
             ]);
             DB::commit();
 
             return $this->apiSuccess('购买成功', ['content' => $info['content']]);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
             Log::error('高手榜购买失败', [
                 'error' => $e->getMessage(),
