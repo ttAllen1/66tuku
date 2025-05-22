@@ -34,6 +34,7 @@ class MasterRankingRequest extends FormRequest
             'id'           => 'required|is_positive_integer',
             'page'         => 'required|is_positive_integer',
             'config_id'    => 'required|int|min:1',
+            'user_id'    => 'required|int|min:1',
             'mark'         => 'required|string',
             'content'      => 'required|string',
             'type'         => 'sometimes|nullable|' . Rule::in([0, 1, 2]),
@@ -55,6 +56,7 @@ class MasterRankingRequest extends FormRequest
             'id.required'              => '参数错误，请重试',
             'id.is_positive_integer'   => '参数错误，请重试',
             'page.is_positive_integer' => '参数错误，请重试',
+            'user_id.required'       => '用户ID必填',
             'config_id.required'       => '配置ID必填',
             'config_id.int'            => '配置ID不正确',
             'config_id.min'            => '配置ID不正确',
@@ -72,6 +74,8 @@ class MasterRankingRequest extends FormRequest
         return [
             'create' => ['config_id', 'mark', 'content', 'lotteryType', 'type', 'fee'],
             'list'   => ['lotteryType', 'page', 'config_id', 'issue',  'sort', 'is_fee', 'is_master', 'filter', 'min_accuracy', 'min_issue'],
+            'detail_list'   => ['lotteryType', 'page', 'config_id', 'user_id'],
+            'detail'   => ['market_id'],
         ];
     }
 }

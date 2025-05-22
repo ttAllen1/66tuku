@@ -40,4 +40,32 @@ class MasterRankingController extends BaseApiController
         ]));
     }
 
+    /**
+     * 详情列表
+     * @param MasterRankingRequest $request
+     * @return JsonResponse
+     */
+    public function detail_list(MasterRankingRequest $request): JsonResponse
+    {
+        $request->validate('detail_list');
+
+        return (new MasterRankingService())->get_page_detail_list($request->only([
+            'lotteryType', 'page', 'config_id', 'user_id'
+        ]));
+    }
+
+    /**
+     * 购买
+     * @param MasterRankingRequest $request
+     * @return JsonResponse
+     */
+    public function detail(MasterRankingRequest $request): JsonResponse
+    {
+        $request->validate('detail');
+
+        return (new MasterRankingService())->detail($request->only([
+            'market_id'
+        ]));
+    }
+
 }

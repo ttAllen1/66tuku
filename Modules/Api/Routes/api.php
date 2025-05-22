@@ -140,6 +140,7 @@ Route::group(["prefix"=>"v1", "middleware"=>["GlobalMiddleware"]],function (){
 
                 // 新高手榜
                 Route::post('master_ranking/create', 'v1\MasterRankingController@create'); // 创建
+                Route::post('master_ranking/detail', 'v1\MasterRankingController@detail'); // 付费查看
             });
 
             // 资金出入站
@@ -426,6 +427,7 @@ Route::group(["prefix"=>"v1", "middleware"=>["GlobalMiddleware"]],function (){
         // 高手版【新】
         Route::get('master_ranking/configs', 'v1\MasterRankingController@configs'); // 高手榜配置信息
         Route::get('master_ranking/list', 'v1\MasterRankingController@list'); // 列表
+        Route::get('master_ranking/detail_list', 'v1\MasterRankingController@detail_list'); // 详情列表
 
 
 
