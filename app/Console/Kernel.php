@@ -37,6 +37,7 @@ use Modules\Admin\Console\Commands\IndexGuess;
 use Modules\Admin\Console\Commands\Kl8IndexPic;
 use Modules\Admin\Console\Commands\Kl8YearPic;
 use Modules\Admin\Console\Commands\LiuheOpenDate;
+use Modules\Admin\Console\Commands\MasterRanking;
 use Modules\Admin\Console\Commands\MemberLimit;
 use Modules\Admin\Console\Commands\MysteryTips;
 use Modules\Admin\Console\Commands\MysteryTipsAm;
@@ -149,7 +150,8 @@ class Kernel extends ConsoleKernel
         AutoPutDiscuss::class,
         DeleteEqKeyword::class,
         UpdateHumorousImages::class,
-        RealOpenLotteryVV::class
+        RealOpenLotteryVV::class,
+        MasterRanking::class
     ];
 
     /**

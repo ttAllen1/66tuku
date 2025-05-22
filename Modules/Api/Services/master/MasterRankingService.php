@@ -6,10 +6,8 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Redis;
 use Modules\Api\Models\MasterRanking;
 use Modules\Api\Models\MasterRankingConfig;
-use Modules\Api\Models\UserMasterRanking;
 use Modules\Api\Services\BaseApiService;
 use Modules\Common\Exceptions\CustomException;
 
@@ -109,6 +107,15 @@ class MasterRankingService extends BaseApiService
                 $data['ten_res'] = $existsData->ten_res;
                 $data['twenty_res'] = $existsData->twenty_res;
                 $data['accuracy'] = $existsData->accuracy;
+                $data['total_right'] = $existsData->total_right;
+                $data['total_wrong'] = $existsData->total_wrong;
+                $data['total_count'] = $existsData->total_count + 1;
+
+                $recentlyData = explode(',', $existsData->recently_data);
+                if (count($recentlyData) > 20) {
+                    array_shift($recentlyData);
+                }
+                $data['recently_data'] = implode(',', $recentlyData) . ', 0';
             }
             DB::table('master_rankings')->insert($data);
 
@@ -159,8 +166,8 @@ class MasterRankingService extends BaseApiService
         $configId = $params['config_id'] ?? 0;
         $range = $issue = $params['issue'] ?? 0; // filter=1时，必须为0。期数范围：0全部；5：近5期；10:近10期；20:近20期
         $sortType = $params['sort'] ?? 0;   // 排序：0期数最多；1正确率；2最新发表；3连对最多；4连错最多
-        if ($sortType == 2) {
-            $issue = 0; // 只要是最新发表，issue 就是 0
+        if ($sortType == 2 || $sortType == 3 || $sortType == 4 || $sortType == 0) {
+            $issue = 0; // 只要不是正确率，issue 就是 0
         }
         $isFee = $params['is_fee'] ?? -1; // 权限：-1全部；0免费；1付费
         $is_master = $params['is_master'] ?? 0; // 是否上榜：0未上榜；1上榜
@@ -195,54 +202,67 @@ class MasterRankingService extends BaseApiService
                 $orderBy = 'max_wrong DESC';
                 break;
             default:
-                $orderBy = $issue == 0 ? 'lot_lat.total_issues DESC' : 'total_issues DESC';
+                $orderBy = 'total_count DESC';
         }
-        if ($issue == 0) {
-            // 1️⃣ 子查询：每个 user_id 在当前过滤条件下的最新一期 issue
-            $subLatest = MasterRanking::query()
-                ->selectRaw('user_id, MAX(issue) AS latest_issue, COUNT(*) AS total_issues')
-                ->where('lotteryType', $params['lotteryType'])
-                ->where('config_id', $params['config_id'])
-                ->where('year', $year)
-                // 只对“付费/免费”的过滤也要应用到子查询
-                ->when($isFee != -1, function ($q) use ($isFee) {
-                    if ($isFee === 0) {
-                        $q->where('type', 0);
-                    } else {
-                        $q->where('type', '>', 0);
-                    }
-                })
-                // 如果有 accuracy 和 total_issues 的初级过滤，也可加（可选）
-                ->when($filter == 1, function ($q) use ($minAcc, $minIssue) {
-                    $q->havingRaw('accuracy >= ?', [$minAcc])
-                        ->havingRaw('COUNT(*) >= ?', [$minIssue]);
-                })
-                ->groupBy('user_id');
 
-            // 2️⃣ 主查询：把最新一期 JOIN 回来，只保留每人最新一期那条记录
-            $query = MasterRanking::query()
-                ->from('master_rankings as mr')
-                ->joinSub($subLatest, 'lat', function ($join) {
-                    $join->on('mr.user_id', '=', 'lat.user_id')
-                        ->on('mr.issue', '=', 'lat.latest_issue');
-                })
-                // 仍然要加上最初的筛选条件，确保数据一致
-                ->where('mr.lotteryType', $params['lotteryType'])
-                ->where('mr.config_id', $params['config_id'])
-                ->where('mr.year', $year)
-                ->when($isFee != -1, function ($q) use ($isFee) {
-                    if ($isFee == 0) {
-                        $q->where('mr.type', 0);
-                    } else {
-                        $q->where('mr.type', '>', 0);
-                    }
-                })
-                // 按照你需要的聚合或字段列表来 select
-                ->selectRaw(<<<SQL
+        // 1️⃣ 子查询：每个 user_id 在当前过滤条件下的最新一期 issue
+        $subLatest = MasterRanking::query()
+            ->selectRaw('user_id, MAX(issue) AS latest_issue')
+            ->where('lotteryType', $params['lotteryType'])
+            ->where('config_id', $params['config_id'])
+            ->orderByDesc('year')
+            // 只对“付费/免费”的过滤也要应用到子查询
+            ->when($isFee != -1, function ($q) use ($isFee) {
+                if ($isFee === 0) {
+                    $q->where('type', 0);
+                } else {
+                    $q->where('type', '>', 0);
+                }
+            })
+            // 如果有 accuracy 和 total_count 的初级过滤，也可加（可选）
+            ->when($filter == 1, function ($q) use ($minAcc, $minIssue) {
+                $q->havingRaw('accuracy >= ?', [$minAcc])
+                    ->havingRaw('COUNT(*) >= ?', [$minIssue]);
+            })
+            ->groupBy('user_id');
+        if ($issue > 0) {
+            $orderBy = 'five_accuracy DESC';
+            if ($issue == 10) {
+                $orderBy = 'ten_accuracy DESC';
+            } elseif ($issue == 20) {
+                $orderBy = 'twenty_accuracy DESC';
+            }
+        }
+        // 2️⃣ 主查询：把最新一期 JOIN 回来，只保留每人最新一期那条记录
+        $query = MasterRanking::query()
+            ->from('master_rankings as mr')
+            ->joinSub($subLatest, 'lat', function ($join) {
+                $join->on('mr.user_id', '=', 'lat.user_id')
+                    ->on('mr.issue', '=', 'lat.latest_issue');
+            })
+            // 仍然要加上最初的筛选条件，确保数据一致
+            ->where('mr.lotteryType', $params['lotteryType'])
+            ->where('mr.config_id', $params['config_id'])
+            ->where('mr.year', $year)
+            ->when($isFee != -1, function ($q) use ($isFee) {
+                if ($isFee == 0) {
+                    $q->where('mr.type', 0);
+                } else {
+                    $q->where('mr.type', '>', 0);
+                }
+            })
+            // 按照你需要的聚合或字段列表来 select
+            ->selectRaw(<<<SQL
             lot_mr.user_id,
-            lot_lat.total_issues,
+            lot_mr.total_count,
             lot_mr.id,
             lot_mr.accuracy,
+            lot_mr.five_accuracy,
+            lot_mr.five_res,
+            lot_mr.ten_accuracy,
+            lot_mr.ten_res,
+            lot_mr.twenty_accuracy,
+            lot_mr.twenty_res,
             lot_mr.max_right,
             lot_mr.max_wrong,
             lot_mr.current_right,
@@ -257,23 +277,15 @@ class MasterRankingService extends BaseApiService
             lot_mr.praise_num,
             lot_mr.created_at
         SQL
-                )
-                ->groupBy('mr.user_id')
-                // 最后再加排序
-                ->orderByRaw($orderBy)
-                ->with(['user:id,nickname,avatar']);
+            )
+            ->groupBy('mr.user_id')
+            // 最后再加排序
+            ->orderByRaw($orderBy)
+            ->with(['user:id,nickname,avatar']);
 
-            // 3️⃣ 分页返回
-            $list = $query->simplePaginate(10);
-            $result = $list->toArray()['data'];
-        } else {
-            $stats = $this->fetchStats($params, $range, $perPage, $page, $orderBy, $year);
-            if ($stats->isEmpty()) {
-                return $this->apiSuccess();
-            }
-            $detailsKeyed = $this->fetchDetails($stats);
-            $result = $detailsKeyed->toArray();
-        }
+        // 3️⃣ 分页返回
+        $list = $query->simplePaginate(10);
+        $result = $list->toArray()['data'];
 
         return $this->apiSuccess('', $result);
     }
@@ -295,7 +307,7 @@ class MasterRankingService extends BaseApiService
         $query = DB::table('master_rankings as mr1')
             ->select([
                 'mr1.user_id',
-                DB::raw('COUNT(*)                    AS total_issues'),
+                DB::raw('COUNT(*)                    AS total_count'),
                 DB::raw('MAX(lot_mr1.issue)               AS latest_issue'),
                 DB::raw('MAX(lot_mr1.max_right)               AS max_right'),
                 DB::raw('MAX(lot_mr1.max_wrong)               AS max_wrong'),
@@ -329,10 +341,10 @@ class MasterRankingService extends BaseApiService
                 , [$lotteryType, $configId, $year, $range - 1]);
         }
 
-        // 初级过滤：accuracy & total_issues
+        // 初级过滤：accuracy & total_count
         if ($filter === 1) {
             $query->havingRaw('accuracy >= ?', [$minAcc])
-                ->havingRaw('total_issues >= ?', [$minIssue]);
+                ->havingRaw('total_count >= ?', [$minIssue]);
         }
 
         // 分组、排序、分页
