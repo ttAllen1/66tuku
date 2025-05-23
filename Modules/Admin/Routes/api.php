@@ -361,6 +361,10 @@ Route::group(["prefix"=>"v1/admin","middleware"=>["AdminApiAuth", "CorsMiddlewar
     /***********************************会员金币***************************************/
     Route::get('user_gold/index', 'v1\UserGoldController@index');
 
+    /***********************************高手榜***************************************/
+    Route::get('master_ranking/index', 'v1\MasterRankingController@index');
+    Route::put('master_ranking/update', 'v1\MasterRankingController@update');
+
     /***********************************会员意见***************************************/
     Route::get('user_advice/index', 'v1\UserAdviceController@index');
     Route::put('user_advice/update', 'v1\UserAdviceController@update');

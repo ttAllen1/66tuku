@@ -5,6 +5,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MasterRanking extends BaseApiModel
 {
+
+    public function config(): BelongsTo
+    {
+        return $this->belongsTo(MasterRankingConfig::class, 'config_id', 'id');
+    }
+
     /**
      * @return BelongsTo
      */
