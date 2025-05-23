@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Modules\Admin\Models\User;
 use Modules\Admin\Models\ZanReadMoney;
 use Modules\Api\Models\BaseApiModel;
+use Modules\Api\Models\MasterRanking;
 use Modules\Api\Models\UserBet;
 use Modules\Api\Models\UserReward;
 
@@ -50,5 +51,13 @@ class UserGoldRecord extends BaseApiModel
     public function posts(): HasOne
     {
         return $this->hasOne(ZanReadMoney::class, 'id', 'user_post_id');
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function market(): HasOne
+    {
+        return $this->hasOne(MasterRanking::class, 'id', 'user_market_id');
     }
 }

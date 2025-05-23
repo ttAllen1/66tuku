@@ -40,6 +40,8 @@ class UserGoldService extends BaseApiService
                 $query->select(['id', 'type']);
             }, 'posts'=>function($query) {
                 $query->select(['id', 'type']);
+            }, 'market'=>function($query) {
+                $query->select(['id', 'type']);
             }])
             ->orderBy('created_at', 'desc')
             ->orderBy('id', 'desc')
@@ -158,6 +160,12 @@ class UserGoldService extends BaseApiService
                         break;
                     case 29:
                         $type = '游戏【PG2电子转出】';
+                        break;
+                    case 30:
+                        $type = '高手榜【支付】';
+                        break;
+                    case 31:
+                        $type = '高手榜【收益】';
                         break;
                 }
                 $list['data'][$k]['type'] = $type;
