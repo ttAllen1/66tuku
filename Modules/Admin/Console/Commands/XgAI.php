@@ -29,7 +29,7 @@ class XgAI extends Command
     /**
      * 目标 API 基础 URL
      */
-    private const BASE_URL = 'http://6hbd.me/api/MarkSix';
+    private const BASE_URL = 'http://t3sn6s.gwflha.xyz/api/MarkSix';
 
     /**
      * HTTP 请求头部信息
