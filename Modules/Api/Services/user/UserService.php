@@ -1280,7 +1280,7 @@ class UserService extends BaseApiService
                     $welfareData['status'] = 0;
                     $welfareData['is_send_msg'] = 1;
                     $welfareData['msg']['title'] = '邀请得彩金';
-                    $welfareData['msg']['content'] = "恭喜您在49图库成功邀请一位新用户，49图库已将彩金发送至您的福利中心，七日内有效哦～49图库祝您生活愉快！";
+                    $welfareData['msg']['content'] = "恭喜您在66宝典成功邀请一位新用户，66宝典已将彩金发送至您的福利中心，七日内有效哦～66宝典祝您生活愉快！";
                     $welfareData['valid_receive_date'] = [
                         \Carbon\Carbon::now()->toDateString(), Carbon::now()->addDays(6)->toDateString()
                     ];

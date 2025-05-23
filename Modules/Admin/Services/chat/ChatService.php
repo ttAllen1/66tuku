@@ -118,7 +118,7 @@ class ChatService extends BaseApiService
                 ->first(['account_name', 'nickname']);
             if ($maxNumber) {
                 $accountNameMaxNumber = str_replace($data['account_name'], '', $maxNumber['account_name']);
-                $nicknameMaxNumber = str_replace(['49图库_'], '', $maxNumber['nickname']);
+                $nicknameMaxNumber = str_replace(['66宝典_'], '', $maxNumber['nickname']);
             }
 
 //            $number += $nicknameMaxNumber;
@@ -133,7 +133,7 @@ class ChatService extends BaseApiService
                 $dbData[] = [
                     'account_name'      => $data['account_name'] . ($accountNameMaxNumber+1),
                     'mobile'            => '',
-                    'nickname'          => rand(1,10) > 7 ? Factory::create('zh_CN')->name : '49图库_' . rand(100000, 999999),
+                    'nickname'          => rand(1,10) > 7 ? Factory::create('zh_CN')->name : '66宝典_' . rand(100000, 999999),
                     'chat_user'         => $this->str_rand(7),
                     'password'          => bcrypt($pw),
                     'chat_pwd'          => md5($pw),

@@ -66,6 +66,7 @@ use Modules\Admin\Console\Commands\TgSend;
 use Modules\Admin\Console\Commands\TongbuDb;
 use Modules\Admin\Console\Commands\UpdateChatAvatar;
 use Modules\Admin\Console\Commands\UpdateHumorousImages;
+use Modules\Admin\Console\Commands\UploadName;
 use Modules\Admin\Console\Commands\VideoCommand;
 use Modules\Admin\Console\Commands\WriteRecommend;
 use Modules\Admin\Console\Commands\XgAI;
@@ -151,7 +152,8 @@ class Kernel extends ConsoleKernel
         DeleteEqKeyword::class,
         UpdateHumorousImages::class,
         RealOpenLotteryVV::class,
-        MasterRanking::class
+        MasterRanking::class,
+        UploadName::class
     ];
 
     /**

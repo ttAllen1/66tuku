@@ -378,7 +378,7 @@ class LoginService extends BaseApiService
                 $welfareData['status'] = 0;
                 $welfareData['is_send_msg'] = 1;
                 $welfareData['msg']['title'] = '注册得彩金';
-                $welfareData['msg']['content'] = "恭喜您在49图库注册账号成功，49图库已将彩金发送至您的福利中心，七日内有效哦～49图库祝您生活愉快！";
+                $welfareData['msg']['content'] = "恭喜您在66宝典注册账号成功，66宝典已将彩金发送至您的福利中心，七日内有效哦～66宝典祝您生活愉快！";
                 $welfareData['valid_receive_date'] = [
                     Carbon::now()->toDateString(), Carbon::now()->addDays(6)->toDateString()
                 ];
@@ -388,7 +388,7 @@ class LoginService extends BaseApiService
             }
             // 是否携带app信息
             if ($configs['app_first_gift'] && $device_code) {
-                (new BaseApiService())->appWelfare(1, $device_code, $userId, $device, "首次使用APP注册福利", "APP注册得彩金", "恭喜您使用APP在49图库注册账号成功，49图库已将使用APP注册福利发送至您的福利中心，七日内有效哦～49图库祝您生活愉快！");
+                (new BaseApiService())->appWelfare(1, $device_code, $userId, $device, "首次使用APP注册福利", "APP注册得彩金", "恭喜您使用APP在66宝典注册账号成功，66宝典已将使用APP注册福利发送至您的福利中心，七日内有效哦～66宝典祝您生活愉快！");
             }
             if (!empty($data['invite_code'])) {
 //                $this->addMoney($data['invite_code'], $userId);
@@ -412,7 +412,7 @@ class LoginService extends BaseApiService
                         $welfareData['status'] = 0;
                         $welfareData['is_send_msg'] = 1;
                         $welfareData['msg']['title'] = '邀请得彩金';
-                        $welfareData['msg']['content'] = "恭喜您在49图库成功邀请一位新用户，49图库已将彩金发送至您的福利中心，七日内有效哦～49图库祝您生活愉快！";
+                        $welfareData['msg']['content'] = "恭喜您在66宝典成功邀请一位新用户，66宝典已将彩金发送至您的福利中心，七日内有效哦～66宝典祝您生活愉快！";
                         $welfareData['valid_receive_date'] = [
                             \Carbon\Carbon::now()->toDateString(), \Illuminate\Support\Carbon::now()->addDays(6)->toDateString()
                         ];
