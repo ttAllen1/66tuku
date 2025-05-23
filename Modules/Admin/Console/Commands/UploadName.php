@@ -45,6 +45,7 @@ class UploadName extends Command
      */
     public function handle()
     {
+        return;
         DB::table('users')->where('nickname', 'like', '49图库_%')
             ->update([
                 'nickname' => DB::raw("REPLACE(nickname, '49图库_', '66宝典_')")
