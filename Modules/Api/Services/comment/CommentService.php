@@ -13,6 +13,7 @@ use Modules\Api\Models\Discuss;
 use Modules\Api\Models\FiveBliss;
 use Modules\Api\Models\Forecast;
 use Modules\Api\Models\Humorous;
+use Modules\Api\Models\MasterRanking;
 use Modules\Api\Models\PicDetail;
 use Modules\Api\Models\PicDiagram;
 use Modules\Api\Models\PicForecast;
@@ -128,6 +129,12 @@ class CommentService extends BaseApiService
 //                $tarClass = Discuss::class;
                 $tarClass = UserComment::query()
                     ->where('commentable_type', 'Modules\Admin\Models\Ai');
+//                    ->where('commentable_id', $params['target_id']);
+                break;
+            case self::MASTERMODEL:
+//                $tarClass = Discuss::class;
+                $tarClass = UserComment::query()
+                    ->where('commentable_type', 'Modules\Admin\Models\MasterRankings');
 //                    ->where('commentable_id', $params['target_id']);
                 break;
             case self::PICMODEL:
@@ -319,7 +326,7 @@ class CommentService extends BaseApiService
             $createData['up_id']        = 0;
             $createData['up_user_id']   = 0;
             $createData['level']        = 1;
-            if ( $params['type'] == self::PICMODEL || $params['type'] == self::PICDIAGRAMMODEL || $params['type'] == self::FORECAST || $params['type'] == self::DISCOVERYMODEL || $params['type'] == self::DISCUSSMODEL || $params['type'] == self::HUMOROUSMODEL || $params['type'] == self::CORPUSARTICES || $params['type'] == self::AIMODEL ) {
+            if ( $params['type'] == self::PICMODEL || $params['type'] == self::PICDIAGRAMMODEL || $params['type'] == self::FORECAST || $params['type'] == self::DISCOVERYMODEL || $params['type'] == self::DISCUSSMODEL || $params['type'] == self::HUMOROUSMODEL || $params['type'] == self::CORPUSARTICES || $params['type'] == self::AIMODEL || $params['type'] == self::MASTERMODEL ) {
                 $targetOrm->increment('commentCount');
             }
             if ( $params['type'] == self::COMMENTMODEL ) {
@@ -650,6 +657,9 @@ class CommentService extends BaseApiService
                     break;
                 case self::AIMODEL:     // ai分析
                     $orm = Ai::query()->findOrFail($target_id, ['id']);
+                    break;
+                case self::MASTERMODEL:     // 高手榜
+                    $orm = MasterRanking::query()->findOrFail($target_id, ['id']);
                     break;
                 default:
                     $orm = new UserComment();

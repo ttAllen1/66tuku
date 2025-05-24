@@ -68,4 +68,18 @@ class MasterRankingController extends BaseApiController
         ]));
     }
 
+    /**
+     * 点赞
+     * @param MasterRankingRequest $request
+     * @return JsonResponse
+     */
+    public function raise(MasterRankingRequest $request): JsonResponse
+    {
+        $request->validate('raise');
+
+        return (new MasterRankingService())->raise($request->only([
+            'market_id'
+        ]));
+    }
+
 }

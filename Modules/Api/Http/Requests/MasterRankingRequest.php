@@ -76,6 +76,7 @@ class MasterRankingRequest extends FormRequest
             'list'   => ['lotteryType', 'page', 'config_id', 'issue',  'sort', 'is_fee', 'is_master', 'filter', 'min_accuracy', 'min_issue'],
             'detail_list'   => ['lotteryType', 'page', 'config_id', 'user_id'],
             'detail'   => ['market_id'],
+            'raise'   => ['market_id'],
         ];
     }
 }

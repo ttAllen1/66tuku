@@ -449,6 +449,17 @@ class MasterRankingService extends BaseApiService
     }
 
     /**
+     * 点赞
+     * @param array $params
+     * @return JsonResponse
+     */
+    public function raise(array $params): JsonResponse
+    {
+        DB::table('master_rankings')->where('id', $params['market_id'])->increment('praise_num');
+        return $this->apiSuccess('点赞成功');
+    }
+
+    /**
      * 第一次查询：按 user_id 聚合近 $range 期的数据，返回分页后的统计结果
      */
     private function fetchStats(array $params, int $range, int $perPage, int $page, string $orderBy, string $year)

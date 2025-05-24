@@ -49,6 +49,7 @@ class BaseService
     public const DISCUSSMODEL = 9;
     public const HUMOROUSMODEL = 11;
     public const AIMODEL = 12;
+    public const MASTERMODEL = 13;
     static $_convertToChinese = [
         1 => '一',
         2 => '二',

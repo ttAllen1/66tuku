@@ -141,6 +141,7 @@ Route::group(["prefix"=>"v1", "middleware"=>["GlobalMiddleware"]],function (){
                 // 新高手榜
                 Route::post('master_ranking/create', 'v1\MasterRankingController@create'); // 创建
                 Route::post('master_ranking/detail', 'v1\MasterRankingController@detail'); // 付费查看
+                Route::post('master_ranking/raise', 'v1\MasterRankingController@raise'); // 点赞
             });
 
             // 资金出入站
